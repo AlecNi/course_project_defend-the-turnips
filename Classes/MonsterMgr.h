@@ -1,8 +1,10 @@
 /*
-2251918 刘骏伟 2023 12 25 初版
+2251918 刘骏伟 2023 12 25 ver1.0
+2251918 刘骏伟 2023 12 28 ver1.1
 */
 /*
-这是一个怪物管理器类，主要负责怪物的生成时机把握和波次控制
+ver1.0 这是一个怪物管理器类，主要负责怪物的生成时机把握和波次控制
+ver1.1 修改接口create->creatWithData
 */
 #ifndef MONSTERMGR
 #define MONSTERMGR
@@ -19,7 +21,7 @@ public:
 	CMonsterMgr();
 	virtual ~CMonsterMgr();
 
-	static CMonsterMgr* create(SWaveData& initData);
+	static CMonsterMgr* createWithData(SWaveData& initData);
 
 	bool initWithData(SWaveData& initData);
 

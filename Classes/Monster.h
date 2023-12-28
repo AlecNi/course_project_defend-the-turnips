@@ -1,9 +1,14 @@
 /*
-刘骏伟 2023 12 24
+2251918刘骏伟 2023 12 24 ver1.0
+2251918刘骏伟 2023 12 28 ver1.1
 */
 
 /*
-单个怪物的类声明头文件
+ver1.0 单个怪物的类声明头文件
+ver1.1 修改了deathBehavior,增加了一个参数为金币类指针
+	   增加了一个内部参数用以表示当前走到第几段路
+	   修改了一些命名，集中在glod->gold，注意实现的调用
+	   修改damage的参数为int iDamageHealth，代表减少的血量
 */
 
 #ifndef CMONSTER
@@ -19,22 +24,23 @@ USING_NS_CC;
 class CBullet;
 class SMonsterData;
 class GameLevel;
+class CGold;
 
-class CMonster : public Node {
+class CMonster : public Sprite {
 public:
 	CMonster();
 	virtual ~CMonster();
 
-	static CMonster* create(const SMonsterData& SInitData);
+	static CMonster* createWithData(const SMonsterData& SInitData);
 
 	bool initWithData(const SMonsterData& SInitData);//初始化函数
 	void initAutoMove();			//初始化自动移动
 	void updateMove(float flDelta);	//更新移动操作
-	void damage(CBullet* pBullet);	//受伤接口
+	void damage(int iDamageHealth);	//受伤接口
 
 	void deathBehavior();			//定义死亡行为
 	float getDistanceToCarrot() const;	//返回距离终点距离
-	int getGlodNum() const;				//获取怪物金币数量
+	int getGoldNum() const;				//获取怪物金币数量
 	bool IsActive() const;				//返回当前是否活跃接口
 
 	void setActive();			//设置为活跃
@@ -46,9 +52,9 @@ protected:
 	CC_SYNTHESIZE(int, m_iMyDeHealth, MyDeHealth);		//扣除萝卜生命值
 	CC_SYNTHESIZE(std::vector<Vec2>, m_vecMyPath, MyPath);//怪物行动路径
 	CC_SYNTHESIZE(float, m_flMyDeSpeedRate, MyDeSpeedRate);//速度减少比率
-	CC_SYNTHESIZE(int, m_iMyGlodNum, MyGlodNum);		//死亡获得金币数
+	CC_SYNTHESIZE(int, m_iMyGoldNum, MyGoldNum);		//死亡获得金币数
 	CC_SYNTHESIZE(bool, m_fMyIsActive, MyIsActive);		//表示活跃状态
-
+	CC_SYNTHESIZE(int, m_iMyNowPath, MyNowPath);		//表示当前移动到第几段位置
 
 
 	CMonsterHpUI* m_pHpUI;								//怪物血量ui
