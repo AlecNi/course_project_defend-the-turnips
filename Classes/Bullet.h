@@ -3,6 +3,7 @@
 */
 /*
 ver1.0 子弹类的头文件声明
+ver1.1 增加接口
 */
 
 #ifndef BULLET
@@ -24,20 +25,20 @@ public:
 	CBullet();
 	virtual ~CBullet();
 
-	static CBullet* createWithData(const SBulletData& refSInitData);
-	bool initWithData(const SBulletData& refSInitData);
+	static CBullet* createWithData(SBulletData* pSInitData);
+	bool initWithData(SBulletData* pSInitData);
 
 	void attackMove(float flDeltaTime);		//实现攻击性移动功能
 	bool checkCollision();					//检测是否碰撞到敌人
 	void didAttack();						//实现攻击效果
-
+	void setAimedMonster(CMonster* pAimedMonster);	//设置攻击目标
 
 protected:
 	CC_SYNTHESIZE(int, m_iMyDamage, MyDamage);	//伤害
 	CC_SYNTHESIZE(float, m_flMySpeed, MySpeed); //速度
 
 
-	CMonster* m_pCAimedMonster;				//目标怪物指针
+	CMonster* m_pAimedMonster;				//目标怪物指针
 
 };
 

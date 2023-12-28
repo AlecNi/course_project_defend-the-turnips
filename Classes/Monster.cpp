@@ -1,23 +1,15 @@
 /*
 2251918刘骏伟 ver1.0 实现1.1版本接口
+2251918刘骏伟 ver1.1 修改部分有关活跃状态接口的实现
 */
 
 
 #include "Monster.h"
 #include "MonsterHpUI.h"
 #include "Bullet.h"
+#include "DataMgr.h"
+#include "MonsterMgr.h"
 
-struct SMonsterData
-{
-	int m_iMyHealth;
-	int m_iMyNowHealth;
-	float m_flMySpeed;
-	int m_iMyDeHealth;
-	std::vector<Vec2> m_vecMyPath;
-	int m_iMyGlodNum;
-	//图片名字
-	std::string m_strFrameName;
-};
 
 
 CMonster::CMonster() 
@@ -32,10 +24,10 @@ CMonster::~CMonster()
 	m_pHpUI->release();
 }
 
-CMonster* CMonster::createWithData(const SMonsterData& SInitData)
+CMonster* CMonster::createWithData(SMonsterData* pSInitData)
 {
 	CMonster* pMonster = new CMonster();
-	if (nullptr != pMonster && pMonster->initWithData(SInitData)) {
+	if (nullptr != pMonster && pMonster->initWithData(pSInitData)) {
 		pMonster->autorelease();
 		return pMonster;
 	}
@@ -43,22 +35,22 @@ CMonster* CMonster::createWithData(const SMonsterData& SInitData)
 	return nullptr;
 }
 
-bool CMonster::initWithData(const SMonsterData& SInitData) 
+bool CMonster::initWithData(SMonsterData* pSInitData)
 {
 	//图片初始化
-	if(!this->initWithFile(SInitData.m_strFrameName))
+	if(!this->initWithFile(pSInitData->m_strFrameName))
 	{
 		return false;
 	}
 
-	setMyDeHealth(SInitData.m_iMyDeHealth);
+	setMyDeHealth(pSInitData->m_iMyDeHealth);
 	setMyDeSpeedRate(0);
-	setMyGoldNum(SInitData.m_iMyGlodNum);
-	setMyHealth(SInitData.m_iMyHealth);
+	setMyGoldNum(pSInitData->m_iMyGoldNum);
+	setMyHealth(pSInitData->m_iMyHealth);
 	setMyIsActive(0);
 	setMyNowHealth(getMyHealth());
-	setMySpeed(SInitData.m_flMySpeed);
-	setMyPath(SInitData.m_vecMyPath);
+	setMySpeed(pSInitData->m_flMySpeed);
+	setMyPath(pSInitData->m_vecMyPath);
 
 	m_pHpUI = new CMonsterHpUI();
 	if (!m_pHpUI->initWith())
@@ -122,8 +114,9 @@ void CMonster::damage(int iDamageHealth)
 	m_pHpUI->showCurHealthRate(static_cast<float>(m_iMyNowHealth)/m_iMyHealth);
 }
 
-inline void CMonster::deathBehavior() 
+inline void CMonster::deathBehavior()
 {
+	m_pMonsterMgr->MonsterDeathMgr(this);
 	setInActive();
 }
 
@@ -132,7 +125,7 @@ inline float CMonster::getDistanceToCarrot() const
 	if (m_iMyNowPath >= m_vecMyPath.size()) {
 		return 0;
 	}
-	return m_vecMyPath[m_iMyNowPath].distance(getPosition());
+	return m_vecMyPath[m_vecMyPath.size()-1].distance(getPosition());
 }
 
 inline int CMonster::getGoldNum() const
@@ -169,4 +162,9 @@ void CMonster::setInActive()
 	//设置不可见
 	setVisible(false);
 	m_pHpUI->setVisible(false);
+}
+
+inline void CMonster::setMgr(CMonsterMgr* pMonsterMgr)
+{
+	m_pMonsterMgr = pMonsterMgr;
 }

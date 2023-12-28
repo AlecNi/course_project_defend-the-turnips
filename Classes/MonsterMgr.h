@@ -21,19 +21,20 @@ public:
 	CMonsterMgr();
 	virtual ~CMonsterMgr();
 
-	static CMonsterMgr* createWithData(SWaveData& initData);
+	static CMonsterMgr* createWithData(SWaveData* pSInitData);
 
-	bool initWithData(SWaveData& initData);
+	bool initWithData(SWaveData* pSInitData);
 
-	void WaveStart();			//波次开始
-	void MonsterGenerate();		//怪物生成逻辑
-
-	bool isFinished();			//返回是否游戏已经结束
+	bool WaveStart();			//波次开始,后续自动
+	void MonsterGenerate();		//怪物生成逻辑，一般情况无需调用
+	void MonsterDeathMgr(CMonster* pMonster);	//怪物死亡管理
+	bool isFinished() const;			//返回是否游戏已经结束
 protected:
 	CC_SYNTHESIZE(int, m_iCurWaveNum, CurWaveNum);	//表示当前波次
+	CC_SYNTHESIZE(int, m_iCurMonIndex, CurMonIndex);//表示当前怪物下标
 	SWaveData* m_pWaveData;							//波次数据
-	std::vector<CMonster*> m_vecActiveMonsterList;	//活跃怪物池
-	std::vector<CMonster*> m_vecInActiveMonsterList; //不活跃怪物池
+	std::vector<CMonster*> m_pActiveMonsterList;	//活跃怪物池
+	std::vector<CMonster*> m_pInActiveMonsterList; //不活跃怪物池
 };
 
 
