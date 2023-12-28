@@ -17,17 +17,9 @@
 
 enum class ConditionType{};
 
-class CGeneralCondition {
-public:
-	CGeneralCondition(ConditionType type,std::string name);
-	
-	const ConditionType getConditionType() const;
-	const std::string& getConditionName() const;
-
-protected:
+struct SGeneralCondition {
 	ConditionType m_CTMyType;
 	std::string m_sMyName;
-private:
 };
 
 #endif
