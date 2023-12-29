@@ -138,3 +138,9 @@ void CBullet::setInActive()
 	setIsActive(false);
 	setVisible(false);
 }
+
+inline void CBullet::MakeDamageSpeedDown(CMonster* pMonster)
+{
+	pMonster->damage(m_iMyDamage);
+	pMonster->SlowDown(m_flBulletSlowDownRate, m_flBulletSlowDownTime);
+}
