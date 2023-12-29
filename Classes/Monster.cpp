@@ -52,8 +52,8 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 	setMySpeed(pSInitData->m_flMySpeed);
 	setMyPath(pSInitData->m_vecMyPath);
 
-	m_pHpUI = new CMonsterHpUI();
-	if (!m_pHpUI->initWith())
+	m_pHpUI =CMonsterHpUI::create();
+	if (!m_pHpUI->init())
 	{
 		return false;
 	}
