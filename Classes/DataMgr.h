@@ -47,6 +47,8 @@ struct SBulletData
 	float flBulletSpeed;
 	/*子弹类型*/
 	int iAttackType;
+	/*子弹贴图文件名*/
+	std::string strBulletFrame;
 };
 
 struct SHpUIData

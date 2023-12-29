@@ -1,5 +1,13 @@
+/*
+2251918ΑυΏ₯Ξ° 2023 12 29 ver1.0
+*/
+
+
+
 #include "MonsterHpUI.h"
 #include "DataMgr.h"
+
+
 
 CMonsterHpUI::CMonsterHpUI()
 	:m_flMyHealthRate(100.0f)
@@ -12,10 +20,10 @@ CMonsterHpUI::~CMonsterHpUI()
 	
 }
 
-CMonsterHpUI* CMonsterHpUI::create(SHpUIData* pHp)
+CMonsterHpUI* CMonsterHpUI::create()
 {
 	CMonsterHpUI* pUI = new CMonsterHpUI;
-	if (nullptr != pUI && pUI->init(pHp))
+	if (nullptr != pUI && pUI->init())
 	{
 		pUI->autorelease();
 		return pUI;
@@ -24,13 +32,15 @@ CMonsterHpUI* CMonsterHpUI::create(SHpUIData* pHp)
 	return nullptr;
 }
 
-bool CMonsterHpUI::init(SHpUIData* pHp)
+bool CMonsterHpUI::init()
 {
 	if (!Node::init)
 	{
 		return false;
 	}
-
+	SHpUIData* pHp;
+	pHp->strFillName = "HpUI_fill.png";
+	pHp->strBackName = "HpUI_back.png";
 	m_pMonsterHealthBar = ui::LoadingBar::create();
 	m_pMonsterHealthBar->loadTexture(pHp->strFillName, ui::LoadingBar::TextureResType::LOCAL);
 	m_pMonsterHealthBar->loadTexture(pHp->strBackName, ui::LoadingBar::TextureResType::LOCAL);
