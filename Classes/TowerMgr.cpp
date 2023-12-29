@@ -6,11 +6,70 @@
 *
 * 防御塔的实现文件
 */
-#include <list>
 #include "cocos2d.h"
 #include "Tower.h"
 #include "TowerMgr.h"
+#include "MonsterMgr.h"
+#include "DataMgr.h"
 USING_NS_CC;
+
+bool CTowerMgr::init()
+{
+    if (!Layer::init()) {
+        return false;
+    }
+
+    m_rgMyTowerList.clear();
+    m_rgMyTowerModel.clear();
+
+    schedule(CC_SCHEDULE_SELECTOR(CTowerMgr::update));
+
+    return true;
+}
+
+void CTowerMgr::update(float dt)
+{
+    auto list = m_pMyMonsterMgr->getActiveMonsterList();
+    std::vector<Vec2> tower_pos;
+
+    for (int i = m_rgMyTowerList.size(); i; --i)
+        tower_pos.push_back(m_rgMyTowerList[i]->getPosition());
+
+    for (int i = list.size(); i; --i) {
+        Vec2 pos = list[i]->getPosition();
+
+        
+    }
+}
+
+bool CTowerMgr::addModel(SGeneralTowerModel* model)
+{
+    for (int i = m_rgMyTowerModel.size(); i; --i)
+        if (model == m_rgMyTowerModel[i])
+            return false;
+
+    m_rgMyTowerModel.push_back(model);
+
+    return true;
+}
+
+CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
+{
+    auto new_tower = CGeneralTower::create();
+    new_tower->initModel(model);
+    new_tower->initByModel();
+    //
+    m_rgMyTowerList.push_back(new_tower);
+
+    return new_tower;
+}
+
+CGeneralTower* CTowerMgr::removeTower(CGeneralTower* move_tower)
+{
+    for (int i = m_rgMyTowerModel.size(); i; --i)
+        if (model == m_rgMyTowerModel[i])
+            return false;
+}
 
 int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
 {
@@ -22,7 +81,7 @@ int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
 
         /*生成选项*/
         for (int i = m_rgMyTowerModel.size(); i; --i) {
-            model = &m_rgMyTowerModel[i];
+            model = m_rgMyTowerModel[i];
 
             /*谁能告诉我字体路径*/
             auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[0]), "fonts/arial.ttf", 24);
@@ -98,9 +157,9 @@ int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
         /*未裁剪的图片，因为我不知道格式*/
         imageSprite = Sprite::create(model->m_sMyPath);
 
-        menuItem = MenuItemLabel::create(numberLabel, [this, menuItem, model, pos, now_level](Ref* sender) {
+        menuItem = MenuItemLabel::create(numberLabel, [this, menuItem, model, pos, now_level, choose] (Ref * sender) {
             if (sender == menuItem) {
-                if (createTower(model, pos)) {
+                if (removeTower(choose)) {
                     CCLOG("Delete!", 2);
                     if (createTower(model, pos))
                         /*回收金币机制*/
