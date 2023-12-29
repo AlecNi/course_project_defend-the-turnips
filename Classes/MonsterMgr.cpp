@@ -1,9 +1,11 @@
 /*
 2251918刘骏伟 2023 12 28 ver1.0
+2251918刘骏伟 2023 12 28 ver1.1
 */
 
 /*
-ver1.0 基本实现了头文件ver1.1的接口,未完成部分不急
+ver1.0 基本实现了头文件ver1.1的接口,未完成部分都由本人负责，所以不影响使用
+ver1.1 实现头文件ver1.2的接口，但金币接口暂时无
 */
 
 #include "MonsterMgr.h"
@@ -94,18 +96,26 @@ void CMonsterMgr::MonsterGenerate()
 
 void CMonsterMgr::MonsterDeathMgr(CMonster* pMonster)
 {
-	for (int i=0;i<m_pActiveMonsterList.size();i++)
-	{
-		if (m_pActiveMonsterList[i] == pMonster)
+	std::vector<CMonster*>::iterator it = std::find_if(m_pActiveMonsterList.begin(), m_pActiveMonsterList.end(),
+		[=](const CMonster* pM)
 		{
-			m_pActiveMonsterList[i] == nullptr;
-			pMonster->getGoldNum();
-			break;
-		}
+			return pM == pMonster;
+		});
+	if (m_pActiveMonsterList.end() == it)
+	{
+		return;
 	}
+	m_pActiveMonsterList.erase(it);
+	m_pActiveMonsterList.resize(m_pActiveMonsterList.size() - 1);
+
 }
 
-inline bool CMonsterMgr::isFinished() const
+inline const bool CMonsterMgr::isFinished() const
 {
 	return (m_pWaveData->m_iWaveNum == m_iCurWaveNum) && (m_pActiveMonsterList.size() == 0);
+}
+
+inline const std::vector<CMonster*> CMonsterMgr::getActiveMonsterList() const
+{
+	return m_pActiveMonsterList;
 }
