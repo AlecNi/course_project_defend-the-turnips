@@ -12,6 +12,7 @@ ver1.1 修改了deathBehavior,增加了一个参数为金币类指针
 	   修改damage的参数为int iDamageHealth，代表减少的血量
 ver1.2 增加了一个成员变量，用以表示该怪物对应的怪物管理器指针
 	   增加了一个用以设定对应管理器的接口setMgr
+ver1.3 增加怪物减速功能与接口
 */
 
 #ifndef CMONSTER
@@ -39,7 +40,9 @@ public:
 	bool initWithData(SMonsterData* pSInitData);//初始化函数
 	void initAutoMove();			//初始化自动移动
 	void updateMove(float flDelta);	//更新移动操作
+	void updateSpeed(float flDelta);//更新减速效果
 	void damage(int iDamageHealth);	//受伤接口
+	void SlowDown(float flSlowDownRate, float flSlowDownTime);	//减速接口
 
 	void deathBehavior();				//定义死亡行为
 	float getDistanceToCarrot() const;	//返回距离终点距离
@@ -56,10 +59,12 @@ protected:
 	CC_SYNTHESIZE(int, m_iMyDeHealth, MyDeHealth);		//扣除萝卜生命值
 	CC_SYNTHESIZE(std::vector<Vec2>, m_vecMyPath, MyPath);//怪物行动路径
 	CC_SYNTHESIZE(float, m_flMyDeSpeedRate, MyDeSpeedRate);//速度减少比率
+	CC_SYNTHESIZE(float, m_flSlowDownTime, SlowDownTime);//减速已持续时间
 	CC_SYNTHESIZE(int, m_iMyGoldNum, MyGoldNum);		//死亡获得金币数
 	CC_SYNTHESIZE(bool, m_fMyIsActive, MyIsActive);		//表示活跃状态
 	CC_SYNTHESIZE(int, m_iMyNowPath, MyNowPath);		//表示当前移动到第几段位置
-	
+	CC_SYNTHESIZE(float, m_flMyCurTime, MyCurTime);		//用来计时过去了多久
+
 	CMonsterMgr* m_pMonsterMgr;							//管理器
 	CMonsterHpUI* m_pHpUI;								//怪物血量ui
 };

@@ -57,6 +57,7 @@ public:
 
 	const bool IsCollisionWith(CMonster* pMonster);		//检测是否碰撞
 	void MakeDamage(CMonster* pMonster);				//对怪物造成伤害
+	void MakeDamageSpeedDown(CMonster* pMonster);	    //对怪物造成伤害并减速
 
 	void setAimedMonster(CMonster* pAimedMonster);		//设置攻击目标
 	void setFatherTower(CGeneralTower* pT);				//设置发射该子弹的塔
@@ -68,9 +69,12 @@ protected:
 	CC_SYNTHESIZE(int, m_iMyAttackType, MyAttackType);	//攻击类型
 	CC_SYNTHESIZE(bool, m_fIsActive, IsActive);			//表示活跃状态
 
+	CC_SYNTHESIZE(float, m_flBulletSlowDownRate, BulletSlowDownRate);	//表示子弹减速率
+	CC_SYNTHESIZE(float, m_flBulletSlowDownTime, BulletSlowDownTime);	//表示子弹减速时间
+	
 	Vec2 m_Direction;						//表示当前移动方向，直线类子弹专属
 	CMonster* m_pAimedMonster;				//目标怪物指针
-	CGeneralTower* m_pTowerFrom;					//产生该子弹的塔指针
+	CGeneralTower* m_pTowerFrom;			//产生该子弹的塔指针
 
 };
 
