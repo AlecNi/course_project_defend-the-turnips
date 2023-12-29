@@ -19,6 +19,13 @@ inline bool CCarrot::init()
         return false;
     }
 
+    /* 模拟更新血量
+this->schedule([this](float dt) {
+if(此处遍历怪物，判断距离是否够远)
+trumble();
+    }, 1.0f, "trumbling");
+    */
+
     // 创建一个 Text 对象
     m_pMyHpUI = cocos2d::ui::Text::create();
     m_pMyHpUI->setPosition(cocos2d::Vec2(240, 160));
@@ -26,28 +33,19 @@ inline bool CCarrot::init()
 
     m_pMyHpUI->setString("Hp: " + std::to_string(m_iMyHp));
 
-    /* 模拟更新血量
-    this->schedule([this](float dt) {
-    if(此处遍历怪物，判断距离是否够远)
-    trumble();
-        }, 1.0f, "trumbling");
-        */
-
     return true;
 }
-
 
 inline bool CCarrot::damage(int iDamageHealth)
 {
 	m_iMyHp -= iDamageHealth;
 
-
     if (m_iMyHp <= 0) {
         m_pMyHpUI->setString("Hp: 0");
-        return false;
+        return true;
     }
     else {
         m_pMyHpUI->setString("Hp: " + std::to_string(m_iMyHp));
-        return true;
+        return false;
     }
 }
