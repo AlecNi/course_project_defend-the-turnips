@@ -4,11 +4,19 @@
 #ifndef __LEVEL_SELECT_SCENE_H__
 #define __LEVEL_SELECT_SCENE_H__
 
+#include "LevelOneScene.h"   
+#include "LevelTwoScene.h"   
+#include "LevelThreeScene.h" 
 #include "cocos2d.h"
+
 
 class LevelSelectScene : public cocos2d::Scene
 {
 public:
+
+    static int getLastSelectedLevel();
+
+
     LevelSelectScene();
     virtual ~LevelSelectScene();
 
@@ -21,14 +29,14 @@ public:
     void level1Callback(cocos2d::Ref* pSender);
     void level2Callback(cocos2d::Ref* pSender);
     void level3Callback(cocos2d::Ref* pSender);
-    void level4Callback(cocos2d::Ref* pSender);
-    void level5Callback(cocos2d::Ref* pSender);
     void returnToMainMenuCallback(cocos2d::Ref* pSender);
 
 private:
     void createBackground(); // 创建背景
     void createLabel(); // 创建标签
     void positionUIElements(); // 设置UI元素的位置
+
+    static int lastSelectedLevel;
 };
 
 #endif // __LEVEL_SELECT_SCENE_H__
