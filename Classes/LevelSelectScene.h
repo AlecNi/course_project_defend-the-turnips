@@ -16,9 +16,7 @@ public:
 
     static int getLastSelectedLevel();
 
-
-    LevelSelectScene();
-    virtual ~LevelSelectScene();
+    static cocos2d::Scene* createScene();
 
     virtual bool init();
 

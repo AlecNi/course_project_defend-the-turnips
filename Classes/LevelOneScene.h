@@ -13,7 +13,7 @@
 
 class LevelOneScene : public cocos2d::Scene {
 public:
-    static cocos2d::Scene* createSceneOne();
+    static cocos2d::Scene* createScene();
 
     virtual bool init();
     CREATE_FUNC(LevelOneScene);

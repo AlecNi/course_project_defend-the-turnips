@@ -10,8 +10,7 @@
 class GameLoseScene : public cocos2d::Scene
 {
 public:
-    GameLoseScene();
-    virtual ~GameLoseScene();
+    static cocos2d::Scene* createScene();
     virtual bool init();
 
     CREATE_FUNC(GameLoseScene);
