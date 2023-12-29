@@ -27,46 +27,36 @@ class CTowerMgr : public cocos2d::Layer {
 	/*表示当前塔下标*/
 	CC_SYNTHESIZE(int, m_iCurMonIndex, CurMonIndex);
 public:
-	/*升级炮塔*/
-	bool upgrades();
+	/*打开选择目录，如果选中的是空地（默认NULL）则打开选择列表,否则会显示升级列表,返回使用的金币数量*/
+	int Memu(Vec2 pos, CGeneralTower* choose = NULL);
 
-	/*更新攻击*/
-	bool update(CGeneralTower*& tower);
+	 /*用于刷新攻击*/
+	 bool init();
+
+	 /*增加炮塔模型*/
+	 bool addModel(SGeneralTowerModel model);
 
 	/*
 	* 改变局部炮塔的状态
 	* void setCondition()
 	*/
 
-	/*启动后可以打开塔的选项*/
-	bool start();
-
 	CREATE_FUNC(CTowerMgr);
 protected:
 	/*申请生成一个塔并返回指针*/
-	CGeneralTower* create(SGeneralTowerModel*& base);
+	CGeneralTower* createTower(SGeneralTowerModel* model, Vec2 pos);
 
-	/*attack函数的从属函数*/
-	CMonster* search(CGeneralTower*& tower);
+	/*判断mgr中有没有相关类型的模型*/
+	bool search(SGeneralTowerModel* model);
 
-	std::list<CMonsterMgr> m_lMyMonsterList;
+	/*当前拥有的所有炮塔*/
+	std::list<CGeneralTower> m_lMyTowerList;
 
+	/*当前拥有的所有模型*/
+	std::vector<SGeneralTowerModel> m_rgMyTowerModel;
+
+	/*用于访问怪物池*/
 	CMonsterMgr* m_pMyMonsterMgr;
-};
-
-/*用来管理选塔，但我不知道zzy做了没，如果冲突就删掉*/
-class CTowerMemu : public cocos2d::Scene
-{
-public:
-    virtual bool init();
-
-    // 按钮点击回调
-	void menuCallback(Ref* sender);
-
-    // 选项点击回调
-	void optionCallback(Ref* sender);
-
-    CREATE_FUNC(CTowerMemu);
 };
 
 #endif
