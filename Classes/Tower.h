@@ -35,7 +35,7 @@ enum class TowerType {
 到程序结束释放
 */
 struct SGeneralTowerModel{
-	/*可以升级的最大等级等级*/
+	/*可以升级的最大等级等级,1,2,3...*/
 	int m_iMyMaxLevel;
 
 	/*买塔及升级所需金币*/
@@ -50,8 +50,11 @@ struct SGeneralTowerModel{
 	/*各个等级基础攻击范围,*/
 	float* m_pMyAttackRage;
 
+	/*各个等级炮口半径*/
+	float* m_fMyBarrelLen;
+
 	/*转速,单位度*/
-	const float m_pMyBaseAngularV = 45;
+	float m_pMyBaseAngularV = 45;
 
 	/*塔名*/
 	std::string m_sMyName;
@@ -83,6 +86,7 @@ class CGeneralTower :public cocos2d::Sprite {
 	/*炮口半径*/
 	CC_SYNTHESIZE(float, m_fMyBarrelLen, MyBarrelLen);
 
+	/*此处默认图片水平向右*/
 	/*角度*/
 	CC_SYNTHESIZE(float, m_fMyAngular, MyAngular);
 
@@ -96,13 +100,21 @@ class CGeneralTower :public cocos2d::Sprite {
 public:
 	CREATE_FUNC(CGeneralTower);  //宏创建的静态生成函数，是Default Construction
 
-	virtual bool initByModel();
+	/*根据model重置数据*/
+	virtual void initByModel();
+
+	/*得到该类的生成模板*/
+	virtual SGeneralTowerModel* getModel();
 
 	/*得到炮口位置，可以用于实现激光等*/
 	cocos2d::Vec2 getBarrelPos();
 
-	/*得到该类的生成模板*/
-	SGeneralTowerModel* getModel();
+/*
+*
+* bool initWithConditoin();
+*
+* what I'm going to do if time promised
+*/
 
 	/*升级炮塔*/
 	bool upgrades();
@@ -112,7 +124,7 @@ protected:
 	SGeneralTowerModel* m_pMyModel;
 
 	/*管理器*/
-	CTowerMgr* m_pMonsterMgr;
+	CTowerMgr* m_pTowerMgr;
 
 private:
 };
