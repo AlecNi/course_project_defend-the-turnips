@@ -6,7 +6,9 @@
 * 塔的实现文件
 */
 #include <cmath>
-#include "tower.h"
+#include "Tower.h"
+#include "Bullet.h"
+#include "DataMgr.h"
 
 void CGeneralTower::initByModel()
 {
@@ -17,6 +19,28 @@ void CGeneralTower::initByModel()
 	m_fMyAttackRage = m_pMyModel->m_pMyAttackRage[m_iMyLevel - 1];
 
 	m_fMyBarrelLen = m_pMyModel->m_fMyBarrelLen[m_iMyLevel - 1];
+}
+
+CGeneralTower* CGeneralTower::initModel(SGeneralTowerModel* model)
+{
+	m_pMyModel = model;
+
+	return this;
+}
+
+CBullet* CGeneralTower::shoot(CMonster* target)
+{
+	if (m_fMyChargeTime > m_fMyAttackPeriod) {
+		auto bullet = CBullet::createWithData(m_pMyModel->m_pMyBullet + m_iMyLevel - 1);;
+
+		bullet->setAimedMonster(target);	//设置攻击目标
+
+		m_fMyChargeTime = 0;
+
+		return bullet;
+	}
+	else
+		return NULL;
 }
 
 cocos2d::Vec2 CGeneralTower::getBarrelPos()
@@ -32,7 +56,6 @@ inline SGeneralTowerModel* CGeneralTower::getModel()
 {
 	return m_pMyModel;
 }
-
 
 bool CGeneralTower::upgrades()
 {
