@@ -1,3 +1,6 @@
+/*
+* ÕÅÕıÑô
+*/
 #ifndef __GOLD_H__
 #define __GOLD_H__
 

@@ -1,8 +1,9 @@
 /*
-* 倪朗恩
+* 2251334 倪朗恩
 *
-* 2023/12/25
-* 2023/12/29
+* 2023/12/25 ver1.0
+* 2023/12/29 ver1.1
+* 2023/12/30 ver1.2
 *
 * 防御塔的实现文件
 */
@@ -10,8 +11,26 @@
 #include "Tower.h"
 #include "TowerMgr.h"
 #include "MonsterMgr.h"
+#include "gold.h"
 #include "DataMgr.h"
 USING_NS_CC;
+
+CTowerMgr::~CTowerMgr()
+{
+    while (!m_rgMyTowerList.empty()) {
+        delete m_rgMyTowerList.back();
+
+        m_rgMyTowerList.pop_back();
+    }
+}
+
+CTowerMgr* CTowerMgr::initData(CMonsterMgr* mgr, CGold* gold)
+{
+    m_pMyMonsterMgr = mgr;
+    m_pMyGold = gold;
+
+    return this;
+}
 
 bool CTowerMgr::init()
 {
@@ -29,22 +48,37 @@ bool CTowerMgr::init()
 
 void CTowerMgr::update(float dt)
 {
-    auto list = m_pMyMonsterMgr->getActiveMonsterList();
+    auto vec_mon = m_pMyMonsterMgr->getActiveMonsterList();
     std::vector<Vec2> tower_pos;
+    std::vector<Vec2> monster_pos;
 
-    for (int i = m_rgMyTowerList.size(); i; --i)
+    for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         tower_pos.push_back(m_rgMyTowerList[i]->getPosition());
 
-    for (int i = list.size(); i; --i) {
-        Vec2 pos = list[i]->getPosition();
+    for (int i = 0; i < vec_mon.size() - 1; ++i)
+        monster_pos.push_back(vec_mon[i]->getPosition());
 
-        
+    for (int i = 0; i < tower_pos.size(); ++i) {
+        float tmp_len2tower = m_rgMyTowerList[i]->getMyAttackRage(), tmp_len2carrot = 65535;
+        CMonster* target;
+
+        for (int j = 0; j < monster_pos.size(); ++j)
+            if ((tower_pos[i] - monster_pos[j]).length() <= tmp_len2tower)
+                if (vec_mon[j]->getDistanceToCarrot() < tmp_len2carrot) {
+                    tmp_len2tower = (tower_pos[i] - monster_pos[j]).length();
+                    tmp_len2carrot = vec_mon[j]->getDistanceToCarrot();
+
+                    target = vec_mon[j];
+                }
+
+        m_rgMyTowerList[i]->attack(target, dt);
     }
+
 }
 
 bool CTowerMgr::addModel(SGeneralTowerModel* model)
 {
-    for (int i = m_rgMyTowerModel.size(); i; --i)
+    for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         if (model == m_rgMyTowerModel[i])
             return false;
 
@@ -53,25 +87,40 @@ bool CTowerMgr::addModel(SGeneralTowerModel* model)
     return true;
 }
 
+inline int CTowerMgr::getCurTowerNum()
+{
+    return m_iCurTowerNum;
+}
+
 CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
 {
     auto new_tower = CGeneralTower::create();
-    new_tower->initModel(model);
+
+    /*更新内部数据*/
+    new_tower->initData(model, this, 1);
+
     new_tower->initByModel();
-    //
+
+    /*设置精灵位置*/
+    new_tower->setPosition(Vec2(100, 100));
+
+    /*设置精灵缩放*/
+    new_tower->setScale(0.5f);
+
     m_rgMyTowerList.push_back(new_tower);
+    ++m_iCurTowerNum;
 
     return new_tower;
 }
 
 CGeneralTower* CTowerMgr::removeTower(CGeneralTower* move_tower)
 {
-    for (int i = m_rgMyTowerModel.size(); i; --i)
-        if (model == m_rgMyTowerModel[i])
+    for (int i = 0; i < m_rgMyTowerList.size(); ++i)
+        if (m_rgMyTowerModel[i])
             return false;
 }
 
-int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
+CGeneralTower* CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
 {
     auto menu = cocos2d::Menu::create();
     addChild(menu);
@@ -80,7 +129,7 @@ int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
         SGeneralTowerModel* model;
 
         /*生成选项*/
-        for (int i = m_rgMyTowerModel.size(); i; --i) {
+        for (int i = 0; i < m_rgMyTowerModel.size(); ++i) {
             model = m_rgMyTowerModel[i];
 
             /*谁能告诉我字体路径*/
@@ -115,7 +164,7 @@ int CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
 
         /*说明创建炮塔时有问题*/
         if (model == NULL)
-            return -1;
+            return NULL;
 
         int max_level = model->m_iMyMaxLevel;
         int now_level = choose->getMyLevel();

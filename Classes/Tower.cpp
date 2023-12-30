@@ -1,14 +1,31 @@
 /*
-* 倪朗恩
+* 倪朗恩 2251334
 *
-* 2023/12/29
+* 2023/12/29 ver1.0
+* 2023/12/30 ver1.1
 *
 * 塔的实现文件
 */
 #include <cmath>
 #include "Tower.h"
 #include "Bullet.h"
+#include "Monster.h"
 #include "DataMgr.h"
+
+CGeneralTower::~CGeneralTower()
+{
+	while (!m_rgMyActiveBullet.empty()) {
+		delete m_rgMyActiveBullet.back();
+
+		m_rgMyActiveBullet.pop_back();
+	}
+
+	while (!m_rgMyInactiveBullet.empty()) {
+		delete m_rgMyInactiveBullet.back();
+
+		m_rgMyInactiveBullet.pop_back();
+	}
+}
 
 void CGeneralTower::initByModel()
 {
@@ -21,32 +38,93 @@ void CGeneralTower::initByModel()
 	m_fMyBarrelLen = m_pMyModel->m_fMyBarrelLen[m_iMyLevel - 1];
 }
 
-CGeneralTower* CGeneralTower::initModel(SGeneralTowerModel* model)
+inline CGeneralTower* CGeneralTower::initData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
 {
 	m_pMyModel = model;
+	m_pTowerMgr = mgr;
+	m_iMyLevel = level;
 
 	return this;
 }
 
-CBullet* CGeneralTower::shoot(CMonster* target)
+inline void CGeneralTower::attack(CMonster* target, float dt)
 {
-	if (m_fMyChargeTime > m_fMyAttackPeriod) {
-		auto bullet = CBullet::createWithData(m_pMyModel->m_pMyBullet + m_iMyLevel - 1);;
+	std::vector<CBullet*>::iterator iter;
 
-		bullet->setAimedMonster(target);	//设置攻击目标
+	for (iter = m_rgMyActiveBullet.begin(); iter != m_rgMyActiveBullet.end();) {
+		/*更新子弹攻击*/
+		(*iter)->attack();
 
-		m_fMyChargeTime = 0;
+		/*只攻击目标的逻辑*/
+		if ((*iter)->IsCollisionWith((*iter)->m_pAimedMonster)) { //检测是否碰撞
+			(*iter)->MakeDamage((*iter)->m_pAimedMonster);	//对怪物造成伤害
+			(*iter)->MakeDamageSpeedDown((*iter)->m_pAimedMonster);  //对怪物造成伤害并减速
 
-		return bullet;
+			auto tmp_iter = iter;
+
+			m_rgMyActiveBullet.erase(iter++);
+
+			delete *iter;
+		}
+		else if ((*iter)->getPosition().length() > 128) {
+			(*iter)->setInActive();	//设置为非活跃
+
+			m_rgMyInactiveBullet.push_back(*iter);
+
+			m_rgMyActiveBullet.erase(iter++);
+		}
+		else
+			++iter;
+	}
+
+	rotate(target, dt);
+}
+
+inline void CGeneralTower::rotate(CMonster* target, float dt)
+{
+	/*获得各种角度，mon_ang，my_ang在0~360，delta_ang在0~180*/
+	float mon_ang = CC_RADIANS_TO_DEGREES((target->getPosition() - getPosition()).getAngle());
+	float my_ang = getRotation();
+	mon_ang -= 360.0 * static_cast<int>(mon_ang / 360.0);
+	my_ang -= 360.0 * static_cast<int>(my_ang / 360.0);
+	mon_ang += 360.0;
+	my_ang += 360.0;
+	mon_ang -= 360.0 * static_cast<int>(mon_ang / 360.0);
+	my_ang -= 360.0 * static_cast<int>(my_ang / 360.0);
+
+	float delta_ang = std::fabs(mon_ang - my_ang);
+	delta_ang -= static_cast<float>(delta_ang / 180.0) * 360.0;
+
+	if (std::fabs(delta_ang)
+		< dt * m_pMyModel->m_pMyBaseAngularV) {
+		/*旋转*/
+		setRotation(mon_ang);
+
+		if (m_fMyChargeTime > m_fMyAttackPeriod) {
+			auto bullet = CBullet::createWithData(m_pMyModel->m_pMyBullet + m_iMyLevel - 1, this);
+
+			bullet->setAimedMonster(target);  //设置攻击目标
+
+			bullet->setFatherTower(this);  //设置发射该子弹的塔
+
+			bullet->initWithData(m_pMyModel->m_pMyBullet);  //初始化
+
+			bullet->setRotation(getRotation());  //子弹朝向
+
+			bullet->setBulletDamage(m_iMyAttack);  //设置子弹伤害
+
+			m_fMyChargeTime = 0;
+		}
 	}
 	else
-		return NULL;
+		setRotation((mon_ang - my_ang == delta_ang) || (mon_ang - my_ang == delta_ang - 360.0) ?
+			my_ang + dt * m_pMyModel->m_pMyBaseAngularV : my_ang - dt * m_pMyModel->m_pMyBaseAngularV);
 }
 
 cocos2d::Vec2 CGeneralTower::getBarrelPos()
 {
 	/*弧度*/
-	double angleInRadians = getRotation() * M_PI / 180.0;
+	double angleInRadians = CC_DEGREES_TO_RADIANS(getRotation());
 	cocos2d::Vec2 currentPosition = getPosition();
 
 	return currentPosition + cocos2d::Vec2(m_fMyBarrelLen * std::cos(angleInRadians), m_fMyBarrelLen * std::sin(angleInRadians));
@@ -60,6 +138,8 @@ inline SGeneralTowerModel* CGeneralTower::getModel()
 bool CGeneralTower::upgrades()
 {
 	++m_iMyLevel;
+
+	float m_fMyAngular = getRotation();
 	
 	// 获取原始图片的大小
 	cocos2d::Size originalSize = getContentSize();
