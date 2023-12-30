@@ -51,10 +51,9 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 	setMyNowHealth(getMyHealth());
 	setMySpeed(pSInitData->m_flMySpeed);
 	setMyPath(pSInitData->m_vecMyPath);
-	setSlowDownTime(0);
 
-	m_pHpUI =CMonsterHpUI::create();
-	if (!m_pHpUI->init())
+	m_pHpUI = new CMonsterHpUI();
+	if (!m_pHpUI->initWith())
 	{
 		return false;
 	}
@@ -69,7 +68,6 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 inline void CMonster::initAutoMove() {
 	setPosition(m_vecMyPath[0]);
 	this->schedule(CC_SCHEDULE_SELECTOR(CMonster::updateMove));
-	this->schedule(CC_SCHEDULE_SELECTOR(CMonster::updateSpeed));
 }
 
 void CMonster::updateMove(float flDelta) 
@@ -169,28 +167,4 @@ void CMonster::setInActive()
 inline void CMonster::setMgr(CMonsterMgr* pMonsterMgr)
 {
 	m_pMonsterMgr = pMonsterMgr;
-}
-
-void CMonster::SlowDown(float flSlowDownRate, float flSlowDownTime)
-{
-	//若减速效果弱于当前，则不减速
-	if (flSlowDownRate < m_flMyDeSpeedRate)
-	{
-		return;
-	}
-	//计时初始化
-	m_flSlowDownTime = flSlowDownTime;
-	m_flMyCurTime = 0.0f;
-	setMyDeSpeedRate(flSlowDownRate);
-}
-
-void CMonster::updateSpeed(float flDelta)
-{
-	m_flMyCurTime += flDelta;
-	if (m_flMyCurTime >= m_flSlowDownTime) 
-	{
-		m_flSlowDownTime = 0;
-		m_flMyCurTime = 0;
-		m_flMyDeSpeedRate = 0;
-	}
 }

@@ -5,7 +5,6 @@
 ver1.0 怪物血条类
 ver1.1 修改了create接口和init接口的参数及命名
 	   修改了变量命名
-ver1.2 修改了create接口和init接口的参数，先使用默认值
 */
 
 #ifndef MONSTERHPUI
@@ -20,9 +19,9 @@ public:
 	CMonsterHpUI();
 	virtual ~CMonsterHpUI();
 
-	static CMonsterHpUI* create();//创造血条显示
+	static CMonsterHpUI* create(SHpUIData* pHp);//创造血条显示
 
-	bool init();									//初始化
+	bool init(SHpUIData* pHp);									//初始化
 
 	void showCurHealthRate(float flCurRate);			//更新血条
 

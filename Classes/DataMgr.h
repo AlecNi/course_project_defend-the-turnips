@@ -1,6 +1,5 @@
 /*
 2251918ljw ver1.0 怪物数据结构体，波次结构体，子弹结构体
-2251334nle ver1.0 炮塔数据结构体，炮塔类型
 
 */
 
@@ -9,12 +8,6 @@
 #include <string>
 #include <cocos2d.h>
 USING_NS_CC;
-
-enum class TowerType {
-	kSingle,  //
-	kAOE,  //群攻
-	kAux,  //辅助
-};
 
 struct SMonsterData
 {
@@ -54,8 +47,6 @@ struct SBulletData
 	float flBulletSpeed;
 	/*子弹类型*/
 	int iAttackType;
-	/*子弹贴图文件名*/
-	std::string strBulletFrame;
 };
 
 struct SHpUIData
@@ -64,39 +55,4 @@ struct SHpUIData
 	std::string strFillName;
 	/*背景图*/
 	std::string strBackName;
-};
-
-struct SGeneralTowerModel {
-	/*可以升级的最大等级等级,1,2,3...*/
-	int m_iMyMaxLevel;
-
-	/*买塔及升级所需金币*/
-	int* m_pMyCost;
-
-	/*各个等级基础攻击力*/
-	int* m_pMyBaseAttack;
-
-	/*各个等级基础攻击周期，单位秒*/
-	float* m_pMyBaseAttackPeriod;
-
-	/*各个等级基础攻击范围,*/
-	float* m_pMyAttackRage;
-
-	/*各个等级炮口半径*/
-	float* m_fMyBarrelLen;
-
-	/*转速,单位度*/
-	float m_pMyBaseAngularV = 45;
-
-	/*塔名*/
-	std::string m_sMyName;
-
-	/*塔的所有图形信息*/
-	std::string m_sMyPath;
-
-	/*塔类型，如对单、aoe、奶等*/
-	const TowerType m_kMyType;
-
-	/*子弹类型，如对单、aoe、奶等*/
-	SBulletData* m_pMyBullet;
 };

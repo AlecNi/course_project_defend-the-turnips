@@ -33,20 +33,7 @@ public:
     // 更新金币数量显示
     void updateGoldLabel();
 
-    // 添加怪物
-    void addMonster();
 
-    // 更新怪物移动
-    void updateMonsterMovement(float dt);
-
-    // 更新怪物血条
-    void updateMonsterHpBar(float hpPercentage);
-
-    // 添加炮塔
-    void addTower(float x, float y);
-
-    // 炮塔发射子弹
-    void towerShootBullet(CTower* tower, CMonster* target);
 
     // 设置金币标签显示金币数量
     void setGoldNum(int goldNum);
@@ -61,7 +48,7 @@ private:
     // 声明其他游戏元素，如地图、怪物、炮塔、萝卜、金币等
     cocos2d::Label* goldLabel; // 金币数量标签
     cocos2d::Vector<CMonster*> monsters;
-    cocos2d::Vector<CTower*> towers;
+    //cocos2d::Vector<CTower*> towers;
     cocos2d::Sprite* radish; // 萝卜
     int goldNum; // 金币数量
 };
