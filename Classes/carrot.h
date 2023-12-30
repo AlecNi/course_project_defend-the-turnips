@@ -15,8 +15,9 @@
 #define _CARROT_H
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
 
-class CMonster;
+class CCarrotMgr;
 
 class CCarrot :public cocos2d::Sprite {
 
@@ -24,8 +25,10 @@ class CCarrot :public cocos2d::Sprite {
 	CC_SYNTHESIZE(int, m_iMyHp, MyHp);
 
 public:
-	/*初始化*/
-	bool initHp(int&& i = 3);
+	virtual ~CCarrot();
+
+	/*刷新血量显示*/
+	bool init();
 
 	/*萝卜受伤,返回true表示死亡*/
 	bool damage(int iDamageHealth);
@@ -37,13 +40,8 @@ public:
 
 	/*申请生成一个萝卜并返回指针(挺生草的)*/
 	CREATE_FUNC(CCarrot);
-
 protected:
-	/*damage函数的从属,更新萝卜血量及提示*/
-	void updateHp();
-
-	/*图片路径*/
-	std::string m_sMyPath;
+	cocos2d::ui::Text* m_pMyHpUI;
 private:
 };
 
