@@ -110,7 +110,7 @@ void CMonsterMgr::MonsterDeathMgr(CMonster* pMonster)
 	}
 	m_pActiveMonsterList.erase(it);
 	m_pActiveMonsterList.resize(m_pActiveMonsterList.size() - 1);
-	pGold->addGolds(pMonster->getGoldNum());
+	m_pGold->addGolds(pMonster->getGoldNum());
 }
 
 inline const bool CMonsterMgr::isFinished() const

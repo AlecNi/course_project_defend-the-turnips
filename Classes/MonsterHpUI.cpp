@@ -34,7 +34,7 @@ CMonsterHpUI* CMonsterHpUI::create()
 
 bool CMonsterHpUI::init()
 {
-	if (!Node::init)
+	if (!Node::init())
 	{
 		return false;
 	}
