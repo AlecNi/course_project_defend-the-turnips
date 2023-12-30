@@ -11,7 +11,9 @@ ver1.1 实现头文件ver1.2的接口，但金币接口暂时无
 #include "MonsterMgr.h"
 #include "Monster.h"
 #include "DataMgr.h"
+#include "gold.h"
 #include "string"
+
 
 
 CMonsterMgr::CMonsterMgr()
@@ -88,6 +90,7 @@ void CMonsterMgr::MonsterGenerate()
 	{
 		this->scheduleOnce([=](float flDelta) {
 				m_pInActiveMonsterList[m_iCurMonIndex]->setActive();
+				m_pInActiveMonsterList[m_iCurMonIndex]->initAutoMove();
 				m_pActiveMonsterList.push_back(m_pInActiveMonsterList[m_iCurMonIndex]);
 			},m_pWaveData->m_flMonsterWaitTime[m_iCurMonIndex], "Monster" + std::to_string(m_iCurMonIndex));
 		m_iCurMonIndex++;
@@ -107,7 +110,7 @@ void CMonsterMgr::MonsterDeathMgr(CMonster* pMonster)
 	}
 	m_pActiveMonsterList.erase(it);
 	m_pActiveMonsterList.resize(m_pActiveMonsterList.size() - 1);
-
+	pGold->addGolds(pMonster->getGoldNum());
 }
 
 inline const bool CMonsterMgr::isFinished() const
@@ -119,3 +122,9 @@ inline const std::vector<CMonster*> CMonsterMgr::getActiveMonsterList() const
 {
 	return m_pActiveMonsterList;
 }
+
+inline void CMonsterMgr::setGoldLink(CGold* pGold)
+{
+	m_pGold = pGold;
+}
+
