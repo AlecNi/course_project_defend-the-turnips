@@ -12,6 +12,7 @@
 #include "TowerMgr.h"
 #include "MonsterMgr.h"
 #include "gold.h"
+#include "Bullet.h"
 #include "DataMgr.h"
 USING_NS_CC;
 
@@ -26,6 +27,7 @@ CTowerMgr::~CTowerMgr()
 
 CTowerMgr* CTowerMgr::initData(CMonsterMgr* mgr, CGold* gold)
 {
+    m_iCurTowerNum = 0;
     m_pMyMonsterMgr = mgr;
     m_pMyGold = gold;
 
@@ -46,7 +48,7 @@ bool CTowerMgr::init()
     return true;
 }
 
-void CTowerMgr::update(float dt)
+inline void CTowerMgr::update(float dt)
 {
     auto vec_mon = m_pMyMonsterMgr->getActiveMonsterList();
     std::vector<Vec2> tower_pos;
@@ -60,7 +62,8 @@ void CTowerMgr::update(float dt)
 
     for (int i = 0; i < tower_pos.size(); ++i) {
         float tmp_len2tower = m_rgMyTowerList[i]->getMyAttackRage(), tmp_len2carrot = 65535;
-        CMonster* target;
+        CMonster* target = NULL;
+        CBullet* bullet;
 
         for (int j = 0; j < monster_pos.size(); ++j)
             if ((tower_pos[i] - monster_pos[j]).length() <= tmp_len2tower)
@@ -71,7 +74,10 @@ void CTowerMgr::update(float dt)
                     target = vec_mon[j];
                 }
 
-        m_rgMyTowerList[i]->attack(target, dt);
+        if (target != NULL)
+            if ((bullet = m_rgMyTowerList[i]->attack(target, dt)) != NULL)
+                m_pScene->addChild(bullet);
+        create
     }
 
 }
@@ -97,7 +103,7 @@ CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
     auto new_tower = CGeneralTower::create();
 
     /*更新内部数据*/
-    new_tower->initData(model, this, 1);
+    new_tower->createWithData(model, this, 1);
 
     new_tower->initByModel();
 
@@ -106,6 +112,9 @@ CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
 
     /*设置精灵缩放*/
     new_tower->setScale(0.5f);
+
+    /*添加进场景*/
+    m_pScene->addChild(new_tower);
 
     m_rgMyTowerList.push_back(new_tower);
     ++m_iCurTowerNum;
@@ -118,6 +127,12 @@ CGeneralTower* CTowerMgr::removeTower(CGeneralTower* move_tower)
     for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         if (m_rgMyTowerModel[i])
             return false;
+}
+
+void CTowerMgr::menuCallback(Ref* sender)
+{
+    /**/
+    CCLOG("Menu item clicked!");
 }
 
 CGeneralTower* CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
@@ -138,18 +153,7 @@ CGeneralTower* CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
             /*未裁剪的图片，因为我不知道格式*/
             auto imageSprite = Sprite::create(model->m_sMyPath);
 
-            MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel, [this, menuItem, model, pos, i](Ref* sender) {
-                if (sender == menuItem) {
-                    if (createTower(model, pos)) {
-                        CCLOG("create tower %s!", );
-                        return model->m_pMyCost[0];
-                    }
-                    else
-                        return 0;
-                }
-                else
-                    return 0;
-                });
+            MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel, CC_CALLBACK_1(CTowerMgr::menuCallback, this));
             menuItem->addChild(imageSprite);
 
             // 设置菜单项位置
@@ -157,6 +161,8 @@ CGeneralTower* CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
 
             // 将菜单项添加到菜单中
             menu->addChild(menuItem);
+
+
         }
     }
     else {

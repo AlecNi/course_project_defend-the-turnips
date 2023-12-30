@@ -26,6 +26,8 @@ trumble();
     }, 1.0f, "trumbling");
     */
 
+    m_iMyHp = 10;
+
     // 创建一个 Text 对象
     m_pMyHpUI = cocos2d::ui::Text::create();
     m_pMyHpUI->setPosition(cocos2d::Vec2(240, 160));

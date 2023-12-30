@@ -24,6 +24,7 @@ struct SBulletData;
 struct SGeneralTowerModel;
 class CTowerMgr;
 class CMonster;
+class CBullet;
 
 class CGeneralTower :public cocos2d::Sprite {
 	/*等级,1,2,3...*/
@@ -64,13 +65,13 @@ public:
 	virtual void initByModel();
 
 	/*输入数据*/
-	virtual CGeneralTower* initData(SGeneralTowerModel* model, CTowerMgr* mgr, int level = 1);
+	virtual CGeneralTower* createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level = 1);
 
 	/*得到该类的生成模板*/
 	virtual SGeneralTowerModel* getModel();
 
 	/*更新子弹行为*/
-	virtual void attack(CMonster* target, float dt);
+	virtual CBullet* attack(CMonster* target, float dt);
 
 	/*得到炮口位置，可以用于实现激光等*/
 	cocos2d::Vec2 getBarrelPos();
@@ -86,7 +87,7 @@ public:
 */
 protected:
 	/*转向并生成子弹*/
-	void rotate(CMonster* target, float dt);
+	CBullet* rotate(CMonster* target, float dt);
 
 	/*该类的生成模板*/
 	SGeneralTowerModel* m_pMyModel;

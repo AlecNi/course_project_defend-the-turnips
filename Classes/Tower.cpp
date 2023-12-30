@@ -38,7 +38,7 @@ void CGeneralTower::initByModel()
 	m_fMyBarrelLen = m_pMyModel->m_fMyBarrelLen[m_iMyLevel - 1];
 }
 
-inline CGeneralTower* CGeneralTower::initData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
+inline CGeneralTower* CGeneralTower::createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
 {
 	m_pMyModel = model;
 	m_pTowerMgr = mgr;
@@ -47,11 +47,11 @@ inline CGeneralTower* CGeneralTower::initData(SGeneralTowerModel* model, CTowerM
 	return this;
 }
 
-inline void CGeneralTower::attack(CMonster* target, float dt)
+inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
 {
-	std::vector<CBullet*>::iterator iter;
+	auto iter = m_rgMyActiveBullet.begin();
 
-	for (iter = m_rgMyActiveBullet.begin(); iter != m_rgMyActiveBullet.end();) {
+	for (; iter != m_rgMyActiveBullet.end();) {
 		/*更新子弹攻击*/
 		(*iter)->attack();
 
@@ -77,10 +77,10 @@ inline void CGeneralTower::attack(CMonster* target, float dt)
 			++iter;
 	}
 
-	rotate(target, dt);
+	return rotate(target, dt);
 }
 
-inline void CGeneralTower::rotate(CMonster* target, float dt)
+inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 {
 	/*获得各种角度，mon_ang，my_ang在0~360，delta_ang在0~180*/
 	float mon_ang = CC_RADIANS_TO_DEGREES((target->getPosition() - getPosition()).getAngle());
@@ -114,11 +114,15 @@ inline void CGeneralTower::rotate(CMonster* target, float dt)
 			bullet->setBulletDamage(m_iMyAttack);  //设置子弹伤害
 
 			m_fMyChargeTime = 0;
+
+			return bullet;
 		}
 	}
 	else
 		setRotation((mon_ang - my_ang == delta_ang) || (mon_ang - my_ang == delta_ang - 360.0) ?
 			my_ang + dt * m_pMyModel->m_pMyBaseAngularV : my_ang - dt * m_pMyModel->m_pMyBaseAngularV);
+
+	return NULL;
 }
 
 cocos2d::Vec2 CGeneralTower::getBarrelPos()

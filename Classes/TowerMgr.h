@@ -50,6 +50,9 @@ public:
 protected:
 	/*用于刷新攻击*/
 	void update(float dt);
+	
+	/*回调函数*/
+	void CTowerMgr::menuCallback(Ref* sender);
 
 	/*申请生成一个塔并返回指针*/
 	CGeneralTower* createTower(SGeneralTowerModel* model, cocos2d::Vec2 pos);
@@ -62,6 +65,9 @@ protected:
 
 	/*用于管理游戏金额*/
 	CGold* m_pMyGold;
+
+	/*管理精灵出现*/
+	cocos2d::Scene* m_pScene;
 
 	/*表示当前塔数*/
 	int m_iCurTowerNum;
