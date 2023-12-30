@@ -56,13 +56,13 @@ inline void CBullet::setBulletDamage(int iDamage)
 
 bool CBullet::initWithData(SBulletData* pInitData)
 {
-	if (!Sprite::initWithFile(pInitData->strBulletFrame))
+	if (!Sprite::initWithFile(pInitData->m_strBulletFrame))
 	{
 		return false;
 	}
-	setMyAttackType(pInitData->iAttackType);
-	setMyDamage(pInitData->iBulletDamage);
-	setMySpeed(pInitData->flBulletSpeed);
+	setMyAttackType(pInitData->m_iAttackType);
+	setMyDamage(pInitData->m_iBulletDamage);
+	setMySpeed(pInitData->m_flBulletSpeed);
 	m_pAimedMonster = nullptr;
 
 	return true;

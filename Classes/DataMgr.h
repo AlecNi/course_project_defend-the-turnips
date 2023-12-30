@@ -1,6 +1,7 @@
 /*
 2251918ljw ver1.0 怪物数据结构体，波次结构体，子弹结构体
 2251334nle ver1.1 塔的数据结构体，塔的类型枚举
+2251918ljw ver1.2 补充子弹结构中的文件名
 */
 
 
@@ -42,11 +43,13 @@ struct SWaveData
 struct SBulletData
 {
 	/*子弹伤害，可以用炮塔伤害代替*/
-	int iBulletDamage;
+	int m_iBulletDamage;
 	/*子弹速度*/
-	float flBulletSpeed;
+	float m_flBulletSpeed;
 	/*子弹类型*/
-	int iAttackType;
+	int m_iAttackType;
+	/*子弹图片文件名*/
+	std::string m_strBulletFrame;
 };
 
 struct SHpUIData
