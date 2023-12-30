@@ -12,7 +12,7 @@
 #ifndef _TOWER_MGR_H
 #define _TOWER_MGR_H
 
-#include <list>
+#include <vector>
 #include "cocos2d.h"
 
 struct SGeneralTowerModel;
@@ -27,46 +27,39 @@ class CTowerMgr : public cocos2d::Layer {
 	/*表示当前塔下标*/
 	CC_SYNTHESIZE(int, m_iCurMonIndex, CurMonIndex);
 public:
-	/*升级炮塔*/
-	bool upgrades();
+	/*打开选择目录，如果选中的是空地（默认NULL）则打开选择列表,否则会显示升级列表,返回使用的金币数量*/
+	int Memu(cocos2d::Vec2 pos, CGeneralTower* choose = NULL);
 
-	/*更新攻击*/
-	bool update(CGeneralTower*& tower);
+	/*启动*/
+	bool init();
+
+	/*增加炮塔模型*/
+	bool addModel(SGeneralTowerModel* model);
 
 	/*
 	* 改变局部炮塔的状态
-	* void setCondition()
+	* void setCondition(cocos2d::Vec2 pos);
 	*/
-
-	/*启动后可以打开塔的选项*/
-	bool start();
 
 	CREATE_FUNC(CTowerMgr);
 protected:
+	/*用于刷新攻击*/
+	void update(float dt);
+
 	/*申请生成一个塔并返回指针*/
-	CGeneralTower* create(SGeneralTowerModel*& base);
+	CGeneralTower* createTower(SGeneralTowerModel* model, cocos2d::Vec2 pos);
 
-	/*attack函数的从属函数*/
-	CMonster* search(CGeneralTower*& tower);
+	/*删除一个塔并返回指针*/
+	CGeneralTower* removeTower(CGeneralTower* move_tower);
 
-	std::list<CMonsterMgr> m_lMyMonsterList;
+	/*当前拥有的所有炮塔*/
+	std::vector<CGeneralTower*> m_rgMyTowerList;
 
+	/*当前拥有的所有模型*/
+	std::vector<SGeneralTowerModel*> m_rgMyTowerModel;
+
+	/*用于访问怪物池*/
 	CMonsterMgr* m_pMyMonsterMgr;
-};
-
-/*用来管理选塔，但我不知道zzy做了没，如果冲突就删掉*/
-class CTowerMemu : public cocos2d::Scene
-{
-public:
-    virtual bool init();
-
-    // 按钮点击回调
-	void menuCallback(Ref* sender);
-
-    // 选项点击回调
-	void optionCallback(Ref* sender);
-
-    CREATE_FUNC(CTowerMemu);
 };
 
 #endif

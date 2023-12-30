@@ -2,36 +2,50 @@
 * 倪朗恩
 *
 * 2023/12/25
-* * 2023/12/29
+* 2023/12/29
 *
-* 萝卜的头文件
-* (有些注释中包含部分未实现而时间充裕可实现的功能)
-*
-* 萝卜与塔不同更接近于怪物故区分出来
+* 萝卜的实现文件
 */
 #include "Carrot.h"
-#include "CarrotMgr.h"
 
-inline bool CCarrotMgr::init()
+CCarrot::~CCarrot()
 {
-    if (!Scene::init()){
+    delete m_pMyHpUI;
+}
+
+inline bool CCarrot::init()
+{
+    if (!cocos2d::Sprite::init()) {
         return false;
     }
 
-    // 创建一个 Text 对象
-    auto label = cocos2d::ui::Text::create();
-    label->setString("Hp: " + std::to_string(m_CMyCarrot->getMyHp()));
-    label->setPosition(cocos2d::Vec2(240, 160));
-    label->setFontSize(24);
-    this->addChild(label);
+    /* 模拟更新血量
+this->schedule([this](float dt) {
+if(此处遍历怪物，判断距离是否够远)
+trumble();
+    }, 1.0f, "trumbling");
+    */
 
-    // 模拟更新分数
-    int Hp = m_CMyCarrot->getMyHp();
-    this->schedule([label, &Hp, this] (float dt) {
-        // 模拟更新分数，每隔一秒增加10分
-        Hp = m_CMyCarrot->getMyHp();
-    label->setString("Hp: " + std::to_string(Hp));
-        }, 1.0f, "update_score");
+    // 创建一个 Text 对象
+    m_pMyHpUI = cocos2d::ui::Text::create();
+    m_pMyHpUI->setPosition(cocos2d::Vec2(240, 160));
+    m_pMyHpUI->setFontSize(24);
+
+    m_pMyHpUI->setString("Hp: " + std::to_string(m_iMyHp));
 
     return true;
+}
+
+inline bool CCarrot::damage(int iDamageHealth)
+{
+	m_iMyHp -= iDamageHealth;
+
+    if (m_iMyHp <= 0) {
+        m_pMyHpUI->setString("Hp: 0");
+        return true;
+    }
+    else {
+        m_pMyHpUI->setString("Hp: " + std::to_string(m_iMyHp));
+        return false;
+    }
 }
