@@ -1,16 +1,17 @@
 /*
-* ÄßÀÊ¶÷ 2251334
+* ï¿½ï¿½ï¿½Ê¶ï¿½ 2251334
 *
 * 2023/12/25 ver1.0
 * 2023/12/29 ver1.1
+* 2023/12/31 ver1.2
 *
-* ÂÜ²·µÄÊµÏÖÎÄ¼þ
+* ï¿½Ü²ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½Ä¼ï¿½
 */
 #include "Carrot.h"
 
 CCarrot::~CCarrot()
 {
-    delete m_pMyHpUI;
+    removeChild(m_pMyHpUI);
 }
 
 inline bool CCarrot::init()
@@ -19,21 +20,22 @@ inline bool CCarrot::init()
         return false;
     }
 
-    /* Ä£Äâ¸üÐÂÑªÁ¿
+    /* Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ñªï¿½ï¿½
 this->schedule([this](float dt) {
-if(´Ë´¦±éÀú¹ÖÎï£¬ÅÐ¶Ï¾àÀëÊÇ·ñ¹»Ô¶)
+if(ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï£¬ï¿½Ð¶Ï¾ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ô¶)
 trumble();
     }, 1.0f, "trumbling");
     */
 
     m_iMyHp = 10;
 
-    // ´´½¨Ò»¸ö Text ¶ÔÏó
+    // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Text ï¿½ï¿½ï¿½ï¿½
     m_pMyHpUI = cocos2d::ui::Text::create();
     m_pMyHpUI->setPosition(cocos2d::Vec2(240, 160));
     m_pMyHpUI->setFontSize(24);
 
     m_pMyHpUI->setString("Hp: " + std::to_string(m_iMyHp));
+    addChild(m_pMyHpUI);
 
     return true;
 }

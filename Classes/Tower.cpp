@@ -15,13 +15,13 @@
 CGeneralTower::~CGeneralTower()
 {
 	while (!m_rgMyActiveBullet.empty()) {
-		delete m_rgMyActiveBullet.back();
+		removeChild(m_rgMyActiveBullet.back(), true);
 
 		m_rgMyActiveBullet.pop_back();
 	}
 
 	while (!m_rgMyInactiveBullet.empty()) {
-		delete m_rgMyInactiveBullet.back();
+		removeChild(m_rgMyInactiveBullet.back(), true);
 
 		m_rgMyInactiveBullet.pop_back();
 	}
@@ -60,18 +60,22 @@ inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
 			(*iter)->MakeDamage((*iter)->m_pAimedMonster);	//对怪物造成伤害
 			(*iter)->MakeDamageSpeedDown((*iter)->m_pAimedMonster);  //对怪物造成伤害并减速
 
+			(*iter)->setInActive();	//设置为非活跃
+
 			auto tmp_iter = iter;
 
 			m_rgMyActiveBullet.erase(iter++);
 
-			delete *iter;
+			m_rgMyInactiveBullet.push_back(*tmp_iter);
 		}
-		else if ((*iter)->getPosition().length() > 128) {
+		else if ((*iter)->getPosition().length() > 1000) {
 			(*iter)->setInActive();	//设置为非活跃
 
-			m_rgMyInactiveBullet.push_back(*iter);
+			auto tmp_iter = iter;
 
 			m_rgMyActiveBullet.erase(iter++);
+
+			m_rgMyInactiveBullet.push_back(*tmp_iter);
 		}
 		else
 			++iter;
@@ -113,6 +117,8 @@ inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 
 			bullet->setBulletDamage(m_iMyAttack);  //设置子弹伤害
 
+			addChild(bullet);
+
 			m_fMyChargeTime = 0;
 
 			return bullet;
@@ -122,10 +128,10 @@ inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 		setRotation((mon_ang - my_ang == delta_ang) || (mon_ang - my_ang == delta_ang - 360.0) ?
 			my_ang + dt * m_pMyModel->m_pMyBaseAngularV : my_ang - dt * m_pMyModel->m_pMyBaseAngularV);
 
-	return NULL;
+	return nullptr;
 }
 
-cocos2d::Vec2 CGeneralTower::getBarrelPos()
+inline cocos2d::Vec2 CGeneralTower::getBarrelPos()
 {
 	/*弧度*/
 	double angleInRadians = CC_DEGREES_TO_RADIANS(getRotation());

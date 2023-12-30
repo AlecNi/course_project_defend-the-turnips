@@ -13,8 +13,6 @@
 #ifndef _CTOWER_H
 #define _CTOWER_H
 
-#include <string>
-#include <set>
 #include "cocos2d.h"
 
 /*

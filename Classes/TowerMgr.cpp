@@ -4,10 +4,11 @@
 * 2023/12/25 ver1.0
 * 2023/12/29 ver1.1
 * 2023/12/30 ver1.2
+* 2023/12/31 ver1.3
 *
 * 防御塔的实现文件
 */
-#include "cocos2d.h"
+#include "ui/CocosGUI.h"
 #include "Tower.h"
 #include "TowerMgr.h"
 #include "MonsterMgr.h"
@@ -19,15 +20,17 @@ USING_NS_CC;
 CTowerMgr::~CTowerMgr()
 {
     while (!m_rgMyTowerList.empty()) {
-        delete m_rgMyTowerList.back();
+        removeChild(m_rgMyTowerList.back(), true);
 
         m_rgMyTowerList.pop_back();
     }
+
+    if (!m_rgMyLabel.empty())
+        removeLabel();
 }
 
-CTowerMgr* CTowerMgr::initData(CMonsterMgr* mgr, CGold* gold)
+CTowerMgr* CTowerMgr::createWithData(CMonsterMgr* mgr, CGold* gold)
 {
-    m_iCurTowerNum = 0;
     m_pMyMonsterMgr = mgr;
     m_pMyGold = gold;
 
@@ -40,6 +43,8 @@ bool CTowerMgr::init()
         return false;
     }
 
+    m_iCurTowerNum = 0;
+    m_rgMyLabel.clear();
     m_rgMyTowerList.clear();
     m_rgMyTowerModel.clear();
 
@@ -62,7 +67,7 @@ inline void CTowerMgr::update(float dt)
 
     for (int i = 0; i < tower_pos.size(); ++i) {
         float tmp_len2tower = m_rgMyTowerList[i]->getMyAttackRage(), tmp_len2carrot = 65535;
-        CMonster* target = NULL;
+        CMonster* target = nullptr;
         CBullet* bullet;
 
         for (int j = 0; j < monster_pos.size(); ++j)
@@ -74,12 +79,9 @@ inline void CTowerMgr::update(float dt)
                     target = vec_mon[j];
                 }
 
-        if (target != NULL)
-            if ((bullet = m_rgMyTowerList[i]->attack(target, dt)) != NULL)
-                m_pScene->addChild(bullet);
-        create
+        if (target != nullptr)
+            m_rgMyTowerList[i]->attack(target, dt);
     }
-
 }
 
 bool CTowerMgr::addModel(SGeneralTowerModel* model)
@@ -107,14 +109,14 @@ CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
 
     new_tower->initByModel();
 
-    /*设置精灵位置*/
-    new_tower->setPosition(Vec2(100, 100));
-
     /*设置精灵缩放*/
     new_tower->setScale(0.5f);
 
+    /*设置精灵位置*/
+    new_tower->setPosition(Vec2(100, 100));
+
     /*添加进场景*/
-    m_pScene->addChild(new_tower);
+    addChild(new_tower);
 
     m_rgMyTowerList.push_back(new_tower);
     ++m_iCurTowerNum;
@@ -122,114 +124,147 @@ CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
     return new_tower;
 }
 
-CGeneralTower* CTowerMgr::removeTower(CGeneralTower* move_tower)
+bool CTowerMgr::removeTower(CGeneralTower* move_tower)
 {
     for (int i = 0; i < m_rgMyTowerList.size(); ++i)
-        if (m_rgMyTowerModel[i])
-            return false;
-}
+        if (m_rgMyTowerList[i] == move_tower) {
+            removeChild(move_tower);
+            --m_iCurTowerNum;
 
-void CTowerMgr::menuCallback(Ref* sender)
-{
-    /**/
-    CCLOG("Menu item clicked!");
-}
-
-CGeneralTower* CTowerMgr::Memu(Vec2 pos, CGeneralTower* choose)
-{
-    auto menu = cocos2d::Menu::create();
-    addChild(menu);
-
-    if (choose == NULL) {
-        SGeneralTowerModel* model;
-
-        /*生成选项*/
-        for (int i = 0; i < m_rgMyTowerModel.size(); ++i) {
-            model = m_rgMyTowerModel[i];
-
-            /*谁能告诉我字体路径*/
-            auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[0]), "fonts/arial.ttf", 24);
-
-            /*未裁剪的图片，因为我不知道格式*/
-            auto imageSprite = Sprite::create(model->m_sMyPath);
-
-            MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel, CC_CALLBACK_1(CTowerMgr::menuCallback, this));
-            menuItem->addChild(imageSprite);
-
-            // 设置菜单项位置
-            menuItem->setPosition(pos + Vec2(20, 20 * i - 10 - m_rgMyTowerModel.size() * 10));
-
-            // 将菜单项添加到菜单中
-            menu->addChild(menuItem);
-
-
+            return true;
         }
+
+    return false;
+}
+
+inline CGeneralTower* CTowerMgr::searchTower(cocos2d::Vec2 pos)
+{
+    for (int i = 0; i < m_rgMyTowerList.size(); ++i)
+        if (m_rgMyTowerList[i]->getPosition() == pos)
+            return m_rgMyTowerList[i];
+
+    return nullptr;
+}
+
+inline bool CTowerMgr::insideLabel(const Vec2& pos)
+{
+    for (auto& label : m_rgMyLabel)
+        if (label->getBoundingBox().containsPoint(pos))
+            return true;
+
+    return false;
+}
+
+inline void CTowerMgr::removeLabel()
+{
+    for (auto& label : m_rgMyLabel){
+        removeChild(label);
     }
-    else {
-        SGeneralTowerModel* model = choose->getModel();
 
-        /*说明创建炮塔时有问题*/
-        if (model == NULL)
-            return NULL;
+    m_rgMyLabel.clear();
+}
 
-        int max_level = model->m_iMyMaxLevel;
-        int now_level = choose->getMyLevel();
+void CTowerMgr::menuInEmpty(Vec2 pos)
+{
+    SGeneralTowerModel* model;
 
-        if (max_level == now_level) {
-            /*说明满级*/
-            return 0;
-        }
+    /*生成选项*/
+    for (int i = 0; i < m_rgMyTowerModel.size(); ++i) {
+        model = m_rgMyTowerModel[i];
 
-        /*生成选项*/
         /*谁能告诉我字体路径*/
-        auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[now_level]), "fonts/arial.ttf", 24);
+        auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[0]), "fonts/arial.ttf", 24);
 
         /*未裁剪的图片，因为我不知道格式*/
         auto imageSprite = Sprite::create(model->m_sMyPath);
 
-        MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel, [this, menuItem, model, pos, now_level](Ref* sender) {
-            if (sender == menuItem) {
-                    if (createTower(model, pos)) {
-                        CCLOG("upgrade!", 1);
-                        return model->m_pMyCost[now_level];
-                    }
-                    else
-                        return 0;
+        MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
+            [this, menuItem, model, pos](Ref* sender) {
+                if (sender == menuItem) {
+                    m_pMyGold->spendGolds(model->m_pMyCost[0]);
+
+                    createTower(model, pos);
                 }
-                else
-                    return 0;
             });
         menuItem->addChild(imageSprite);
 
-        menuItem->setPosition(pos + Vec2(20, 10));
+        /*设置菜单项位置*/
+        menuItem->setPosition(pos + Vec2(20, 20 * i - 10 - m_rgMyTowerModel.size() * 10));
 
-        menu->addChild(menuItem);
-
-        /*删除选项*/
-        /*谁能告诉我字体路径*/
-        numberLabel = Label::createWithTTF(std::to_string(-model->m_pMyCost[now_level] / 2), "fonts/arial.ttf", 24);
-
-        /*未裁剪的图片，因为我不知道格式*/
-        imageSprite = Sprite::create(model->m_sMyPath);
-
-        menuItem = MenuItemLabel::create(numberLabel, [this, menuItem, model, pos, now_level, choose] (Ref * sender) {
-            if (sender == menuItem) {
-                if (removeTower(choose)) {
-                    CCLOG("Delete!", 2);
-                    if (createTower(model, pos))
-                        /*回收金币机制*/
-                        return -model->m_pMyCost[now_level] / 2;
-                }
-                else
-                    return 0;
-            }
-            else
-                return 0;
-            });
-        menuItem->addChild(imageSprite);
-
-        menuItem->setPosition(pos + Vec2(20, -10));
-
-        menu->addChild(menuItem);
+        /*将菜单项添加到菜单中*/
+        addChild(menuItem);
     }
+}
+
+void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
+{
+    auto choose = searchTower(pos);
+    auto model = choose->getModel();
+
+    /*说明创建炮塔时有问题*/
+    if (model == nullptr)
+        return;
+
+    int max_level = model->m_iMyMaxLevel;
+    int now_level = choose->getMyLevel();
+
+    if (max_level == now_level)
+        /*说明满级*/
+        return;
+
+    /*生成选项*/
+    /*谁能告诉我字体路径*/
+    auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[now_level]), "fonts/arial.ttf", 24);
+
+    /*未裁剪的图片，因为我不知道格式*/
+    auto imageSprite = Sprite::create(model->m_sMyPath);
+
+    MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
+        [this, menuItem, model, pos, now_level, choose](Ref* sender) {
+            if (sender == menuItem) {
+                m_pMyGold->spendGolds(model->m_pMyCost[now_level]);
+
+                createTower(model, pos);
+            }
+        });
+    menuItem->addChild(imageSprite);
+
+    menuItem->setPosition(pos + Vec2(20, 10));
+
+    addChild(menuItem);
+
+
+    /*删除选项*/
+    /*谁能告诉我字体路径*/
+    numberLabel = Label::createWithTTF(std::to_string(-model->m_pMyCost[now_level] / 2), "fonts/arial.ttf", 24);
+
+    /*未裁剪的图片，因为我不知道格式*/
+    imageSprite = Sprite::create(model->m_sMyPath);
+
+    /*还你一半*/
+    menuItem = MenuItemLabel::create(numberLabel,
+        [this, menuItem, model, pos, now_level, choose](Ref* sender) {
+            if (sender == menuItem) {
+                m_pMyGold->addGolds(model->m_pMyCost[now_level - 1] / 2);
+
+                createTower(model, pos);
+            }
+        });
+    menuItem->addChild(imageSprite);
+
+    menuItem->setPosition(pos + Vec2(20, -10));
+
+    addChild(menuItem);
+}
+
+void CTowerMgr::Memu(Vec2 pos)
+{
+    CGeneralTower* choose = searchTower(pos);
+
+    /*创建选项*/
+    if (choose == nullptr)
+        menuInEmpty(pos);
+    /*升级选项*/
+    else
+        menuNotInEmpty(choose, pos);
 }
