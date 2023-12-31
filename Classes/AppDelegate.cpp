@@ -1,5 +1,7 @@
 #include "AppDelegate.h"
 #include "StartScene.h"
+#include "GameLoseScene.h"
+#include "LevelSceneOne.h"
 // #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
@@ -9,9 +11,9 @@ using namespace cocos2d::experimental;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
+static cocos2d::Size designResolutionSize = cocos2d::Size(960, 640);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
+static cocos2d::Size mediumResolutionSize = cocos2d::Size(960, 640);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
 AppDelegate::AppDelegate()
@@ -62,7 +64,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0f / 60);
 
     // Set the design resolution
-    Size largerDesignResolutionSize = Size(1920, 1080);
+    Size largerDesignResolutionSize = Size(960, 640);
 
     // 设置新的设计分辨率
     glview->setDesignResolutionSize(largerDesignResolutionSize.width, largerDesignResolutionSize.height, ResolutionPolicy::NO_BORDER);
@@ -75,9 +77,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
+    Director::getInstance()->setDisplayStats(false); // 隐藏OpenGL参数
+    Director::getInstance()->setAnimationInterval(1.0 / 60.0); // 设置帧率，这里是60帧每秒
     // create a scene. it's an autorelease object
     auto scene = StartScene::createScene();
-
     // run
     director->runWithScene(scene);
 

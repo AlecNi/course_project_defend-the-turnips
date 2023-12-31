@@ -63,6 +63,8 @@ bool CBullet::initWithData(SBulletData* pInitData)
 	setMyAttackType(pInitData->m_iAttackType);
 	setMyDamage(pInitData->m_iBulletDamage);
 	setMySpeed(pInitData->m_flBulletSpeed);
+	setBulletSlowDownRate(0.6);
+	setBulletSlowDownTime(5);
 	m_pAimedMonster = nullptr;
 
 	return true;
@@ -79,7 +81,7 @@ inline void CBullet::attack()
 	}
 	case 1:
 	{
-		schedule(CC_SCHEDULE_SELECTOR(CBullet::ContinueAttack));
+		schedule(CC_SCHEDULE_SELECTOR(CBullet::CollisionAttack));
 		break;
 	}
 	case 2:
@@ -109,13 +111,23 @@ inline void CBullet::MakeDamage(CMonster* pMonster)
 
 void CBullet::CollisionAttack(float flDeltaTime)
 {
+	if (!m_pAimedMonster->IsActive())
+	{
+		m_fIsActive = false;
+	}
+
 	if (!m_fIsActive)
 	{
 		return;
 	}
 	if (IsCollisionWith(m_pAimedMonster))
 	{
-		MakeDamage(m_pAimedMonster);
+		if (m_iMyAttackType == 1) {
+			MakeDamageSpeedDown(m_pAimedMonster);
+		}
+		else {
+			MakeDamage(m_pAimedMonster);
+		}
 		setInActive();
 		return;
 	}
