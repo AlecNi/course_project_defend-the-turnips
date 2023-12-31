@@ -16,7 +16,14 @@ ver1.0 这是一个将文件转化为结构体数据的工具性文件
 #include <memory>
 #include <cocos2d.h>
 
-std::shared_ptr<SLevelData*> openFile(const std::string& refFileName)
+cocos2d::Vec2 trans_ij_to_xy(int ix,int iy) {
+	cocos2d::Vec2 vec;
+	vec.x = 40 + iy * 80;
+	vec.y = 40 + (6 - ix) * 80;
+	return vec;
+}
+
+SLevelData* openFile(const std::string& refFileName)
 {
 	std::ifstream fileStream(refFileName);
 
@@ -32,8 +39,7 @@ std::shared_ptr<SLevelData*> openFile(const std::string& refFileName)
 	当前关炮塔种类数量a
 a段:
 {
-			最大等级 购买金币 攻击力 攻击间隔 攻击范围 炮口半径 塔名 塔图形文件名 塔类型
-子弹数据:	子弹类型 子弹图片文件名
+	炮塔文件名
 }
 	当前关地图路径点个数n
 n段:	路径点的x，路径点的y ……
@@ -44,7 +50,14 @@ b段:
 		当前波次怪物数量n  波次开始等待时间 
 n次:	波次调用怪物文件名 怪物加载等待时间
 }
-	
+	*/
+	/*
+	炮塔文件格式如下：
+	塔最高等级n
+n段：{
+	购买或升级所需金币，攻击力，攻击间隔，攻击范围，炮口半径 塔名 塔类型 塔图片文件名
+	子弹类型，子弹图片文件名
+}
 	*/
 	/*
 	怪物文件格式如下：
@@ -58,12 +71,41 @@ n次:	波次调用怪物文件名 怪物加载等待时间
 	fileStream >> iTowerNum;
 	for (int i = 0; i < iTowerNum; i++)
 	{
+		std::ifstream TowerFile(refFileName);
+
+		if (!TowerFile.is_open())
+		{
+			return;
+		}
+		int iMaxLevel = 0;
+		TowerFile >> iMaxLevel;
 		SGeneralTowerModel* TowerModel = new SGeneralTowerModel();
-		fileStream >> TowerModel->m_iMyMaxLevel >> TowerModel->m_pMyCost >> TowerModel->m_pMyBaseAttackPeriod >> TowerModel->m_pMyAttackRage
-			>> TowerModel->m_fMyBarrelLen >> TowerModel->m_sMyName >> TowerModel->m_sMyPath >> TowerModel->m_kMyType;
+		int iCost = 0, iAttack = 0;
+		float flATime = 0, flARage = 0, flLen = 0;
+		int iTowerType = 0, iBulletType = 1;
+
+		TowerModel->m_iMyMaxLevel = iMaxLevel;
+		
+		std::string strTowerName, strTowerPath, strBulletPath;
+		for (int i = 0; i < iMaxLevel; i++)
+		{
+			TowerFile >> iCost >> iAttack >> flATime >> flARage >>flLen>> strTowerName >> iTowerType >> strTowerPath >> iBulletType >> strBulletPath;
+			TowerModel->m_pMyCost.push_back(iCost);
+			TowerModel->m_pMyBaseAttack.push_back(iAttack);
+			TowerModel->m_pMyBaseAttackPeriod.push_back(flATime);
+			TowerModel->m_fMyBarrelLen.push_back(flLen);
+			TowerModel->m_pMyAttackRage.push_back(flARage);
+			TowerModel->m_sMyPath.push_back(strTowerPath);
+		}
+		TowerModel->m_kMyType = iTowerType;
+		TowerModel->m_sMyName = strTowerName;
+		
 		SBulletData* Bullet = new SBulletData();
-		fileStream >> Bullet->m_iAttackType >> Bullet->m_strBulletFrame;
+		Bullet->m_iAttackType = iBulletType;
+		Bullet->m_iBulletDamage = iAttack;
+		Bullet->m_strBulletFrame = strBulletPath;
 		TowerModel->m_pMyBullet = Bullet;
+
 		pInitData->m_pTowerMgr->m_rgTowerModel.push_back(TowerModel);
 	}
 
@@ -103,6 +145,8 @@ n次:	波次调用怪物文件名 怪物加载等待时间
 			MonsterFile.close();
 		}
 	}
+	std::shared_ptr<SLevelData> ptr(pInitData);
+	return ptr.get();
 
 }
 

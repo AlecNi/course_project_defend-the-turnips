@@ -71,10 +71,10 @@ struct SHpUIData
 };
 
 /*塔的攻击种类*/
-enum class TowerType {
-	kSingle,  //单对单
-	kAOE,  //群攻
-	kAux,  //辅助
+enum TowerType {
+	kSingle,	//单对单
+	kAOE,		//群攻
+	kAux,		//辅助
 };
 
 struct SGeneralTowerModel {
@@ -82,19 +82,19 @@ struct SGeneralTowerModel {
 	int m_iMyMaxLevel;
 
 	/*买塔及升级所需金币*/
-	int* m_pMyCost;
+	std::vector<int> m_pMyCost;
 
 	/*各个等级基础攻击力*/
-	int* m_pMyBaseAttack;
+	std::vector<int> m_pMyBaseAttack;
 
 	/*各个等级基础攻击周期，单位秒*/
-	float* m_pMyBaseAttackPeriod;
+	std::vector<float> m_pMyBaseAttackPeriod;
 
 	/*各个等级基础攻击范围,*/
-	float* m_pMyAttackRage;
+	std::vector<float> m_pMyAttackRage;
 
 	/*各个等级炮口半径*/
-	float* m_fMyBarrelLen;
+	std::vector<float> m_fMyBarrelLen;
 
 	/*转速,单位度*/
 	float m_pMyBaseAngularV = 45;
@@ -103,10 +103,10 @@ struct SGeneralTowerModel {
 	std::string m_sMyName;
 
 	/*塔的所有图形信息*/
-	std::string m_sMyPath;
+	std::vector<std::string> m_sMyPath;
 
 	/*塔类型，如对单、aoe、奶等*/
-	const TowerType m_kMyType;
+	int m_kMyType;
 
 	/*子弹类型，如对单、aoe、奶等*/
 	SBulletData* m_pMyBullet;
