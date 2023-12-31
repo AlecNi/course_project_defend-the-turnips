@@ -8,28 +8,31 @@ ver1.1 修改了create接口和init接口的参数及命名
 ver1.2 修改了create接口和init接口的参数，先使用默认值
 */
 
-#ifndef MONSTERHPUI
-#define MONSTERHPUI
+#ifndef __CMONSTER_HP_UI_H__
+#define __CMONSTER_HP_UI_H__
+
 #include "cocos2d.h"
-#include "ui/CocosGUI.h"
 USING_NS_CC;
-class SHpUIData;
 
-class CMonsterHpUI : public Node {
+class CMonsterHpUI : public cocos2d::Node {
 public:
-	CMonsterHpUI();
-	virtual ~CMonsterHpUI();
+    CMonsterHpUI();
 
-	static CMonsterHpUI* create();//创造血条显示
+    virtual bool init() override;
 
-	bool init();									//初始化
+    // 设置血条百分比（0.0到1.0）
+    void setHealth(float flPercentage);
 
-	void showCurHealthRate(float flCurRate);			//更新血条
+    CREATE_FUNC(CMonsterHpUI);
 
-protected:
-	CC_SYNTHESIZE(float, m_flMyHealthRate, MyHealthRate);//血条比
-	ui::LoadingBar* m_pMonsterHealthBar;					//血条
+private:
+    // 更新血条显示
+    void updateCMonsterHpUI();
+
+private:
+    cocos2d::Sprite* background; // 背景
+    cocos2d::Sprite* bar;        // 血条
+    CC_SYNTHESIZE(float, m_flMyRate, MyRate);             // 血条百分比
 };
 
-
-#endif // !MONSTERHPUI
+#endif // __CMONSTER_HP_UI_H__

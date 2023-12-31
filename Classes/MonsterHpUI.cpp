@@ -7,58 +7,39 @@
 #include "MonsterHpUI.h"
 #include "DataMgr.h"
 
+USING_NS_CC;
 
-
-CMonsterHpUI::CMonsterHpUI()
-	:m_flMyHealthRate(100.0f)
+CMonsterHpUI::CMonsterHpUI() : m_flMyRate(1.0f) 
 {
 
 }
 
-CMonsterHpUI::~CMonsterHpUI()
-{
-	
+bool CMonsterHpUI::init() {
+    if (!Node::init()) {
+        return false;
+    }
+
+    // 创建底部背景
+    background = Sprite::create("background_image.png"); 
+    addChild(background);
+
+    // 创建血条
+    bar = Sprite::create("bar_image.png"); 
+    addChild(bar);
+
+    updateCMonsterHpUI();
+
+    return true;
 }
 
-CMonsterHpUI* CMonsterHpUI::create()
+void CMonsterHpUI::setHealth(float flPercentage) 
 {
-	CMonsterHpUI* pUI = new CMonsterHpUI;
-	if (nullptr != pUI && pUI->init())
-	{
-		pUI->autorelease();
-		return pUI;
-	}
-	CC_SAFE_DELETE(pUI);
-	return nullptr;
+    m_flMyRate = clampf(flPercentage, 0.0f, 1.0f);
+    updateCMonsterHpUI();
 }
 
-bool CMonsterHpUI::init()
-{
-	if (!Node::init())
-	{
-		return false;
-	}
-	SHpUIData* pHp;
-	pHp->strFillName = "HpUI_fill.png";
-	pHp->strBackName = "HpUI_back.png";
-	m_pMonsterHealthBar = ui::LoadingBar::create();
-	m_pMonsterHealthBar->loadTexture(pHp->strFillName, ui::LoadingBar::TextureResType::LOCAL);
-	m_pMonsterHealthBar->loadTexture(pHp->strBackName, ui::LoadingBar::TextureResType::LOCAL);
-	m_pMonsterHealthBar->setDirection(ui::LoadingBar::Direction::LEFT);
-	m_pMonsterHealthBar->setPercent(m_flMyHealthRate);
-
-	m_pMonsterHealthBar->setContentSize(Size(100,10));
-	return true;
-
-}
-
-void CMonsterHpUI::showCurHealthRate(float flCurRate)
-{
-	if (flCurRate <= 0 || flCurRate > 100)
-	{
-		return;
-	}
-
-	setMyHealthRate(flCurRate);
-	m_pMonsterHealthBar->setPercent(m_flMyHealthRate);
+void CMonsterHpUI::updateCMonsterHpUI() {
+    if (bar) {
+        bar->setScaleX(m_flMyRate);
+    }
 }
