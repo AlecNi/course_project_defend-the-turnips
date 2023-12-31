@@ -15,9 +15,10 @@
 #define _CARROT_H
 
 #include "cocos2d.h"
-#include "ui/CocosGUI.h"
 
 class CCarrotMgr;
+class CMonster;
+class CMonsterMgr;
 
 class CCarrot :public cocos2d::Sprite {
 
@@ -30,18 +31,26 @@ public:
 	/*刷新血量显示*/
 	bool init();
 
+	static CCarrot* createWithData(cocos2d::Vec2 pos, CMonsterMgr* mgr);
+
 	/*萝卜受伤,返回true表示死亡*/
-	bool damage(int iDamageHealth);
+	bool update();
 
 	/*
 	* 萝卜的抖动动画
 	* void trumble();
 	*/
 
+protected:
 	/*申请生成一个萝卜并返回指针(挺生草的)*/
 	CREATE_FUNC(CCarrot);
-protected:
-	cocos2d::ui::Text* m_pMyHpUI;
+
+	/*萝卜受伤,返回true表示死亡*/
+	bool damage(CMonster* monster);
+
+	cocos2d::Label* m_pMyHpUI;
+
+	CMonsterMgr* m_pMyMonsterMgr;
 private:
 };
 

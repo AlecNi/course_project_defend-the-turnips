@@ -9,7 +9,7 @@
 #include "Bullet.h"
 #include "DataMgr.h"
 #include "MonsterMgr.h"
-
+#include "AudioEngine.h"
 
 
 CMonster::CMonster() 
@@ -113,13 +113,14 @@ void CMonster::damage(int iDamageHealth)
 		deathBehavior();
 		return;
 	}
-	m_pHpUI->showCurHealthRate(static_cast<float>(m_iMyNowHealth)/m_iMyHealth);
+	m_pHpUI->setHealth(static_cast<float>(m_iMyNowHealth)/m_iMyHealth);
 }
 
 inline void CMonster::deathBehavior()
 {
 	m_pMonsterMgr->MonsterDeathMgr(this);
 	setInActive();
+	AudioEngine::play2d("death_effect.mp3",false);
 }
 
 inline float CMonster::getDistanceToCarrot() const

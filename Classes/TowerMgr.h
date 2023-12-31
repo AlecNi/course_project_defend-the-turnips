@@ -53,9 +53,9 @@ public:
 	* 改变局部炮塔的状态
 	* void setCondition(cocos2d::Vec2 pos);
 	*/
-
-	CREATE_FUNC(CTowerMgr);
 protected:
+	CREATE_FUNC(CTowerMgr);
+
 	/*用于刷新攻击*/
 	void update(float dt);
 

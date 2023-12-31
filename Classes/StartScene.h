@@ -15,6 +15,7 @@
 
 #include "cocos2d.h"
 
+
 class StartScene : public cocos2d::Scene
 {
 public:
@@ -24,14 +25,12 @@ public:
 
     CREATE_FUNC(StartScene);
 
-    // 按钮回调函数
+     //按钮回调函数
     void startGameCallback(cocos2d::Ref* pSender);
     void quitGameCallback(cocos2d::Ref* pSender);
 
 private:
-    void createBackground(); // 创建背景
-
-    void positionUIElements(); // 设置UI元素的位置
+    void createALL(); // 创建一切
 };
 
 #endif // __START_SCENE_H__
