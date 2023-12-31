@@ -8,7 +8,7 @@
 * �ܲ���ʵ���ļ�
 */
 #include <string>
-#include "Carrot.h"
+#include "carrot.h"
 #include "Monster.h"
 #include "MonsterMgr.h"
 
