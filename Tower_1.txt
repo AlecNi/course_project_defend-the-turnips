@@ -1,4 +1,4 @@
 3
-100 12 1 240 30 Tower_nle 0 Tower_1_1.png 1 Bullet_1.png
-120 30 1 300 30 Tower_nle 0 Tower_1_2.png 1 Bullet_1.png
-140 50 1 360 30 Tower_nle 0 Tower_1_3.png 1 Bullet_1.png
+100 12 1 240 30 normal_tower_1 0 Tower_1_1.png 1 Bullet_1.png
+120 30 1 300 30 normal_tower_1 0 Tower_1_2.png 1 Bullet_1.png
+140 50 1 360 30 normal_tower_1 0 Tower_1_3.png 1 Bullet_1.png
