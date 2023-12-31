@@ -38,6 +38,16 @@ struct SWaveData
 	std::vector<int> m_iWaveMonsterNum;
 	/*怪物时间间隔*/
 	std::vector<float> m_flMonsterWaitTime;
+
+	~SWaveData()
+	{
+		for (SMonsterData* p : m_pMonsterData)
+		{
+			delete p;
+			p = nullptr;
+		}
+		m_pMonsterData.clear();
+	}
 };
 
 struct SBulletData
@@ -45,7 +55,7 @@ struct SBulletData
 	/*子弹伤害，可以用炮塔伤害代替*/
 	int m_iBulletDamage;
 	/*子弹速度*/
-	float m_flBulletSpeed;
+	float m_flBulletSpeed=10;
 	/*子弹类型*/
 	int m_iAttackType;
 	/*子弹图片文件名*/
@@ -100,4 +110,38 @@ struct SGeneralTowerModel {
 
 	/*子弹类型，如对单、aoe、奶等*/
 	SBulletData* m_pMyBullet;
+
+
+	~SGeneralTowerModel()
+	{
+		delete m_pMyBullet;
+	}
+};
+
+struct STowerMgrData
+{
+	/*塔数据数组*/
+	std::vector<SGeneralTowerModel*> m_rgTowerModel;
+
+	~STowerMgrData()
+	{
+		for (SGeneralTowerModel* p : m_rgTowerModel)
+		{
+			delete p;
+			p = nullptr;
+		}
+		m_rgTowerModel.clear();
+	}
+};
+
+struct SLevelData
+{
+	STowerMgrData* m_pTowerMgr;
+	SWaveData* m_pMonsterMgr;
+
+	~SLevelData()
+	{
+		delete m_pMonsterMgr;
+		delete m_pTowerMgr;
+	}
 };

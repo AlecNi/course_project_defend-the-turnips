@@ -8,6 +8,7 @@ ver1.0 基本实现了头文件ver1.1的接口,未完成部分都由本人负责，所以不影响使用
 ver1.1 实现头文件ver1.2的接口，但金币接口暂时无
 */
 
+
 #include "MonsterMgr.h"
 #include "Monster.h"
 #include "DataMgr.h"
@@ -41,6 +42,10 @@ CMonsterMgr* CMonsterMgr::createWithData(SWaveData* pSInitData)
 
 bool CMonsterMgr::initWithData(SWaveData* initData)
 {
+	if (initData == nullptr)
+	{
+		return false;
+	}
 	m_pWaveData = initData;
 	int iMonsterNumAll = 0;
 	for (int i = 0; i < m_pWaveData->m_iWaveNum; i++)
@@ -56,6 +61,7 @@ bool CMonsterMgr::initWithData(SWaveData* initData)
 	//设置初始值
 	setCurWaveNum(0);
 	setCurMonIndex(0);
+	return true;
 }
 
 bool CMonsterMgr::WaveStart() {

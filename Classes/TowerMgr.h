@@ -17,6 +17,7 @@
 #include <vector>
 #include "cocos2d.h"
 
+struct STowerMgrData;
 struct SGeneralTowerModel;
 class CGeneralTower;
 class CMonsterMgr;
@@ -28,7 +29,7 @@ public:
 	virtual ~CTowerMgr();
 
 	/*初始化数据*/
-	virtual CTowerMgr* createWithData(CMonsterMgr* mgr, CGold* gold);
+	static CTowerMgr* createWithData(STowerMgrData* pInitData,CMonsterMgr* mgr, CGold* gold);
 
 	/*打开选择目录，如果选中的是空地（默认NULL）则打开选择列表,否则会显示升级列表,返回生成的塔的坐标，方便addChild到场景里*/
 	void Memu(cocos2d::Vec2 pos);

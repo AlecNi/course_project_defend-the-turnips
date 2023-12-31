@@ -29,12 +29,18 @@ CTowerMgr::~CTowerMgr()
         removeLabel();
 }
 
-CTowerMgr* CTowerMgr::createWithData(CMonsterMgr* mgr, CGold* gold)
+CTowerMgr* CTowerMgr::createWithData(STowerMgrData* pInitData,CMonsterMgr* mgr, CGold* gold)
 {
-    m_pMyMonsterMgr = mgr;
-    m_pMyGold = gold;
-
-    return this;
+    CTowerMgr* pTowerMgr = new CTowerMgr();
+    if (nullptr != pTowerMgr && pTowerMgr->init()) {
+        pTowerMgr->m_rgMyTowerModel = pInitData->m_rgTowerModel;
+        pTowerMgr->m_pMyMonsterMgr = mgr;
+        pTowerMgr->m_pMyGold = gold;
+        pTowerMgr->autorelease();
+        return pTowerMgr;
+    }
+    CC_SAFE_DELETE(pTowerMgr);
+    return nullptr;
 }
 
 bool CTowerMgr::init()
@@ -46,7 +52,6 @@ bool CTowerMgr::init()
     m_iCurTowerNum = 0;
     m_rgMyLabel.clear();
     m_rgMyTowerList.clear();
-    m_rgMyTowerModel.clear();
 
     schedule(CC_SCHEDULE_SELECTOR(CTowerMgr::update));
 
