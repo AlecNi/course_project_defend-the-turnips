@@ -54,16 +54,13 @@ class CGeneralTower :public cocos2d::Sprite {
 	*/
 
 public:
-	/*宏创建的静态生成函数，是Default Construction*/
-	CREATE_FUNC(CGeneralTower);
-
 	virtual ~CGeneralTower();
 
 	/*根据model与等级重置数据*/
 	virtual void initByModel();
 
-	/*输入数据*/
-	virtual CGeneralTower* createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level = 1);
+	/*输入数据创建*/
+	static CGeneralTower* createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level = 1);
 
 	/*得到该类的生成模板*/
 	virtual SGeneralTowerModel* getModel();
@@ -84,6 +81,9 @@ public:
 * what I'm going to do if time promised
 */
 protected:
+	/*宏创建的静态生成函数，是Default Construction*/
+	CREATE_FUNC(CGeneralTower);
+
 	/*转向并生成子弹*/
 	CBullet* rotate(CMonster* target, float dt);
 
@@ -92,9 +92,6 @@ protected:
 
 	/*管理器*/
 	CTowerMgr* m_pTowerMgr;
-
-	/*管理射出去的子弹*/
-	std::vector<CBullet*> m_rgMyInactiveBullet;
 
 	/*管理射出去的子弹*/
 	std::vector<CBullet*> m_rgMyActiveBullet;

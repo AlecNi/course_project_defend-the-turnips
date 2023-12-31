@@ -31,15 +31,17 @@ CTowerMgr::~CTowerMgr()
 
 CTowerMgr* CTowerMgr::createWithData(STowerMgrData* pInitData,CMonsterMgr* mgr, CGold* gold)
 {
-    CTowerMgr* pTowerMgr = new CTowerMgr();
-    if (nullptr != pTowerMgr && pTowerMgr->init()) {
+    CTowerMgr* pTowerMgr = CTowerMgr::create();
+
+    if (pTowerMgr != nullptr) {
         pTowerMgr->m_rgMyTowerModel = pInitData->m_rgTowerModel;
         pTowerMgr->m_pMyMonsterMgr = mgr;
         pTowerMgr->m_pMyGold = gold;
         pTowerMgr->autorelease();
+
         return pTowerMgr;
     }
-    CC_SAFE_DELETE(pTowerMgr);
+
     return nullptr;
 }
 
@@ -67,7 +69,7 @@ inline void CTowerMgr::update(float dt)
     for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         tower_pos.push_back(m_rgMyTowerList[i]->getPosition());
 
-    for (int i = 0; i < vec_mon.size() - 1; ++i)
+    for (int i = 0; i < vec_mon.size(); ++i)
         monster_pos.push_back(vec_mon[i]->getPosition());
 
     for (int i = 0; i < tower_pos.size(); ++i) {
@@ -107,10 +109,10 @@ inline int CTowerMgr::getCurTowerNum()
 
 CGeneralTower* CTowerMgr::createTower(SGeneralTowerModel* model, Vec2 pos)
 {
-    auto new_tower = CGeneralTower::create();
+    auto new_tower = CGeneralTower::createWithData(model, this);
 
-    /*更新内部数据*/
-    new_tower->createWithData(model, this, 1);
+    if (new_tower == nullptr)
+        return nullptr;
 
     new_tower->initByModel();
 
@@ -133,7 +135,7 @@ bool CTowerMgr::removeTower(CGeneralTower* move_tower)
 {
     for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         if (m_rgMyTowerList[i] == move_tower) {
-            removeChild(move_tower);
+            removeChild(move_tower, true);
             --m_iCurTowerNum;
 
             return true;
@@ -163,7 +165,7 @@ inline bool CTowerMgr::insideLabel(const Vec2& pos)
 inline void CTowerMgr::removeLabel()
 {
     for (auto& label : m_rgMyLabel){
-        removeChild(label);
+        removeChild(label, true);
     }
 
     m_rgMyLabel.clear();
@@ -181,7 +183,7 @@ void CTowerMgr::menuInEmpty(Vec2 pos)
         auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[0]), "fonts/arial.ttf", 24);
 
         /*未裁剪的图片，因为我不知道格式*/
-        auto imageSprite = Sprite::create(model->m_sMyPath);
+        auto imageSprite = Sprite::create(model->m_sMyPath[0]);
 
         MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
             [this, menuItem, model, pos](Ref* sender) {
@@ -203,7 +205,6 @@ void CTowerMgr::menuInEmpty(Vec2 pos)
 
 void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
 {
-    auto choose = searchTower(pos);
     auto model = choose->getModel();
 
     /*说明创建炮塔时有问题*/
@@ -222,7 +223,7 @@ void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
     auto numberLabel = Label::createWithTTF(std::to_string(model->m_pMyCost[now_level]), "fonts/arial.ttf", 24);
 
     /*未裁剪的图片，因为我不知道格式*/
-    auto imageSprite = Sprite::create(model->m_sMyPath);
+    auto imageSprite = Sprite::create(model->m_sMyPath[now_level]);
 
     MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
         [this, menuItem, model, pos, now_level, choose](Ref* sender) {
@@ -244,7 +245,7 @@ void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
     numberLabel = Label::createWithTTF(std::to_string(-model->m_pMyCost[now_level] / 2), "fonts/arial.ttf", 24);
 
     /*未裁剪的图片，因为我不知道格式*/
-    imageSprite = Sprite::create(model->m_sMyPath);
+    imageSprite = Sprite::create(/**/);
 
     /*还你一半*/
     menuItem = MenuItemLabel::create(numberLabel,

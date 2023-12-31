@@ -19,12 +19,6 @@ CGeneralTower::~CGeneralTower()
 
 		m_rgMyActiveBullet.pop_back();
 	}
-
-	while (!m_rgMyInactiveBullet.empty()) {
-		removeChild(m_rgMyInactiveBullet.back(), true);
-
-		m_rgMyInactiveBullet.pop_back();
-	}
 }
 
 void CGeneralTower::initByModel()
@@ -40,11 +34,17 @@ void CGeneralTower::initByModel()
 
 inline CGeneralTower* CGeneralTower::createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
 {
-	m_pMyModel = model;
-	m_pTowerMgr = mgr;
-	m_iMyLevel = level;
+	auto tower = CGeneralTower::create();
 
-	return this;
+	if (tower != nullptr) {
+		tower->m_pMyModel = model;
+		tower->m_pTowerMgr = mgr;
+		tower->m_iMyLevel = level;
+
+		return tower;
+	}
+
+	return nullptr;
 }
 
 inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
@@ -52,30 +52,14 @@ inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
 	auto iter = m_rgMyActiveBullet.begin();
 
 	for (; iter != m_rgMyActiveBullet.end();) {
-		/*更新子弹攻击*/
-		(*iter)->attack();
 
 		/*只攻击目标的逻辑*/
-		if ((*iter)->IsCollisionWith((*iter)->m_pAimedMonster)) { //检测是否碰撞
-			(*iter)->MakeDamage((*iter)->m_pAimedMonster);	//对怪物造成伤害
-			(*iter)->MakeDamageSpeedDown((*iter)->m_pAimedMonster);  //对怪物造成伤害并减速
-
-			(*iter)->setInActive();	//设置为非活跃
-
+		if ((*iter)->getIsActive() == false) {
 			auto tmp_iter = iter;
 
 			m_rgMyActiveBullet.erase(iter++);
 
-			m_rgMyInactiveBullet.push_back(*tmp_iter);
-		}
-		else if ((*iter)->getPosition().length() > 1000) {
-			(*iter)->setInActive();	//设置为非活跃
-
-			auto tmp_iter = iter;
-
-			m_rgMyActiveBullet.erase(iter++);
-
-			m_rgMyInactiveBullet.push_back(*tmp_iter);
+			removeChild(*tmp_iter, true);
 		}
 		else
 			++iter;
@@ -106,6 +90,9 @@ inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 
 		if (m_fMyChargeTime > m_fMyAttackPeriod) {
 			auto bullet = CBullet::createWithData(m_pMyModel->m_pMyBullet + m_iMyLevel - 1, this);
+
+			if (bullet == nullptr)
+				return nullptr;
 
 			bullet->setAimedMonster(target);  //设置攻击目标
 
@@ -147,6 +134,9 @@ inline SGeneralTowerModel* CGeneralTower::getModel()
 
 bool CGeneralTower::upgrades()
 {
+	if (m_iMyLevel == m_pMyModel->m_iMyMaxLevel)
+		return false;
+
 	++m_iMyLevel;
 
 	float m_fMyAngular = getRotation();
@@ -168,4 +158,6 @@ bool CGeneralTower::upgrades()
 	/*
 	* initWithConditoin();
 	*/
+
+	return true;
 }
