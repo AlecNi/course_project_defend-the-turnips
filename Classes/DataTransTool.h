@@ -6,6 +6,36 @@
 ver1.0 这是一个将文件转化为结构体数据的工具性文件 
 */
 
+/*
+	文件格式如下：
+	当前关炮塔种类数量a
+a段:
+{
+	炮塔文件名
+}
+	当前关地图路径点个数n
+n段:	路径点的x，路径点的y ……
+
+	当前关波次数量b
+b段:
+{
+		当前波次怪物数量n  波次开始等待时间
+n次:	波次调用怪物文件名 怪物加载等待时间
+}
+	*/
+	/*
+	炮塔文件格式如下：
+	塔最高等级n
+n段：{
+	购买或升级所需金币，攻击力，攻击间隔，攻击范围，炮口半径 塔名 塔类型 塔图片文件名
+	子弹类型，子弹图片文件名
+}
+	*/
+	/*
+	怪物文件格式如下：
+	怪物生命值上限 怪物正常速度 怪物触碰萝卜损失生命值 死亡掉落金币数量
+	怪物图片名字
+	*/
 #ifndef _DATA_TOOL_H
 #define _DATA_TOOL_H
 
@@ -34,36 +64,7 @@ SLevelData* openFile(const std::string& refFileName)
 
 	SLevelData* pInitData = new SLevelData();
 	//先输入炮塔
-	/*
-	文件格式如下：
-	当前关炮塔种类数量a
-a段:
-{
-	炮塔文件名
-}
-	当前关地图路径点个数n
-n段:	路径点的x，路径点的y ……
-
-	当前关波次数量b
-b段:
-{
-		当前波次怪物数量n  波次开始等待时间 
-n次:	波次调用怪物文件名 怪物加载等待时间
-}
-	*/
-	/*
-	炮塔文件格式如下：
-	塔最高等级n
-n段：{
-	购买或升级所需金币，攻击力，攻击间隔，攻击范围，炮口半径 塔名 塔类型 塔图片文件名
-	子弹类型，子弹图片文件名
-}
-	*/
-	/*
-	怪物文件格式如下：
-	怪物生命值上限 怪物正常速度 怪物触碰萝卜损失生命值 死亡掉落金币数量
-	怪物图片名字 
-	*/
+	
 
 	pInitData->m_pTowerMgr = new STowerMgrData();
 	pInitData->m_pMonsterMgr = new SWaveData();
@@ -115,7 +116,7 @@ n段：{
 	for (int i = 0; i < iPathNum; i++)
 	{
 		fileStream >> ix >> iy;
-		rgMyPath.push_back(cocos2d::Vec2(ix, iy));
+		rgMyPath.push_back(trans_ij_to_xy(ix,iy));
 	}
 
 	fileStream >> iWaveNum;
@@ -147,7 +148,6 @@ n段：{
 	}
 	std::shared_ptr<SLevelData> ptr(pInitData);
 	return ptr.get();
-
 }
 
 
