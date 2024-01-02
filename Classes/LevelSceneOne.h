@@ -25,7 +25,7 @@ public:
     ~LevelSceneOne();
     static LevelSceneOne* createWithData(SLevelData* pSInitData);
 
-    // virtual被我去掉啦！！！！嘻嘻
+    
     bool initWithData(SLevelData* pSInitData);  // 场景初始化函数
 
     // 创建坐标系

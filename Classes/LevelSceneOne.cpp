@@ -1,42 +1,26 @@
 // LevelSceneOne.cpp
 #include "LevelSceneOne.h"
 #include "LevelSelectScene.h"
+#include "GameLoseScene.h"
+#include "GameWinScene.h"
 #include "DataMgr.h"
 #include "carrot.h"
 #include "MonsterMgr.h"
 #include "TowerMgr.h"
-
+#include "DataTransTool.h"
 #include "gold.h"
 
 USING_NS_CC;
 
-inline std::vector<int> trans_xy_to_ij(Vec2 vec) {
-    return { static_cast<int>((vec.x) / 80) ,6 - static_cast<int>((vec.y) / 80) };
-}
 
-inline cocos2d::Vec2 trans_ij_to_xy(int ix, int iy) {
-    cocos2d::Vec2 vec;
-    vec.x = 40 + iy * 80;
-    vec.y = 40 + (6 - ix) * 80;
-    return vec;
-}
 
 LevelSceneOne::LevelSceneOne()
 {
 
 }
 
-LevelSceneOne::~LevelSceneOne() {
-    delete  m_pMonsterMgr;
-    m_pMonsterMgr = nullptr;
-    delete  m_pGold;
-    m_pGold = nullptr;
-    delete  m_pTowerMgr;
-    m_pTowerMgr = nullptr;
-    delete  m_pCarrot;
-    m_pCarrot = nullptr;
-    delete  m_pLevelData;
-    m_pLevelData = nullptr;
+LevelSceneOne::~LevelSceneOne() 
+{
 }
 
 LevelSceneOne* LevelSceneOne::createWithData(SLevelData* pSInitData)
@@ -44,28 +28,38 @@ LevelSceneOne* LevelSceneOne::createWithData(SLevelData* pSInitData)
     LevelSceneOne* pLevelSceneOne = new LevelSceneOne();
     if (nullptr != pLevelSceneOne && pLevelSceneOne->initWithData(pSInitData))
     {
-        pLevelSceneOne->autorelease();
         return pLevelSceneOne;
     }
     CC_SAFE_DELETE(pLevelSceneOne);
     return nullptr;
 }
 
-bool LevelSceneOne::initWithData(SLevelData* pSInitData) {
-
+bool LevelSceneOne::initWithData(SLevelData* pSInitData) 
+{
     if (!Scene::init()) {
         return false;
     }
-    pSInitData = m_pLevelData;
+    if (pSInitData == nullptr)
+    {
+        CCLOG("wrong ptr");
+        return false;
+    }
+    m_pLevelData = pSInitData;
     m_pMonsterMgr = CMonsterMgr::createWithData(m_pLevelData->m_pMonsterMgr);
-    m_pGold = new CGold();
+    m_pGold = CGold::create();
     m_pTowerMgr = CTowerMgr::createWithData(m_pLevelData->m_pTowerMgr, m_pMonsterMgr, m_pGold);
     m_pCarrot = CCarrot::createWithData(Vec2(840,440),m_pMonsterMgr);
-    schedule([=](float flDelta)
+    addChild(m_pCarrot, 10);
+    m_pCarrot->setVisible(true);
+    addChild(m_pMonsterMgr, 10);
+    m_pMonsterMgr->setGoldLink(m_pGold);
+    addChild(m_pTowerMgr);
+    addChild(m_pGold);
+    schedule([&](float flDelta)
         {
             if (m_pCarrot->updateDamage())
             {
-                return;
+                Director::getInstance()->replaceScene(GameLoseScene::create());
             }
         }, "Failure");
     
@@ -213,15 +207,16 @@ void LevelSceneOne::showCountdown() {
         image1->setVisible(false);
 
     // 在这里添加倒计时结束后的逻辑，比如返回1
-    //this->Start();
+    this->Start();
         }, 3.0f, "countdown_key_3");
 }
 
     //游戏开始
-//void LevelSceneOne::Start() {
-//
-//    listenerStart();
-//}
+void LevelSceneOne::Start() {
+    CCLOG("WaveStart");
+    listenerStart();
+    m_pMonsterMgr->WaveStart();
+}
 
         //倍速按钮响应
 void LevelSceneOne::accelerateGame(Ref* sender) {
@@ -283,11 +278,13 @@ void LevelSceneOne::pauseGame(Ref* sender) {
     //设置金币标签
 void LevelSceneOne::createLabel() {
 
-   // std::string str = std::to_string(CGold::getGolds());
-    // 创建级金币标签
     std::string str = "100";
+    // 创建级金币标签
     auto label = Label::createWithTTF(str, "Marker Felt.ttf", 32);
-
+    schedule([=](float flDelta)
+        {
+            label->setString(std::to_string(m_pGold->getGolds()));
+        }, "Gold");
     // 设置标签的位置
     label->setPosition(Vec2(115, 605));
 
@@ -316,5 +313,5 @@ void LevelSceneOne::restartGame(Ref* sender)
 {
     pauseButton->setEnabled(true);
     Director::getInstance()->resume();
-    Director::getInstance()->replaceScene(createWithData(NULL));//修改
+    Director::getInstance()->replaceScene(createWithData(m_pLevelData));//修改
 }

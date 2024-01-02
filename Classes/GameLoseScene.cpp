@@ -3,6 +3,8 @@
 
 #include "GameLoseScene.h"
 #include "LevelSelectScene.h"
+#include "LevelSceneOne.h"
+#include "DataTransTool.h"
 
 USING_NS_CC;
 
@@ -57,7 +59,7 @@ void GameLoseScene::retryLevelCallback(Ref* pSender) {
     //获取当前关卡数，然后进行重玩
     switch (LevelSelectScene::getLastSelectedLevel()) {
         case 1:
-            Director::getInstance()->replaceScene(TransitionFade::create(1.0, LevelSceneOne::createWithData(NULL)));
+            Director::getInstance()->replaceScene(TransitionFade::create(1.0, LevelSceneOne::createWithData(openFile("LevelOne.txt"))));
             break;
         case 2:
             //Director::getInstance()->replaceScene(TransitionFade::create(1.0, LevelSceneTwo::createWithData(NULL)));

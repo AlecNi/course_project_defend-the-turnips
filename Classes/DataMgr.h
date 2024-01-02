@@ -3,11 +3,16 @@
 2251334nle ver1.1 塔的数据结构体，塔的类型枚举
 2251918ljw ver1.2 补充子弹结构中的文件名
 */
+#ifndef _DATAMGR_H_
+#define _DATAMGR_H_
+
+
 
 
 #include <vector>
 #include <string>
 #include "cocos2d.h"
+
 USING_NS_CC;
 
 struct SMonsterData
@@ -111,7 +116,11 @@ struct SGeneralTowerModel {
 	/*子弹类型，如对单、aoe、奶等*/
 	SBulletData* m_pMyBullet;
 
-
+	SGeneralTowerModel()
+	{
+		m_pMyBaseAngularV = 45;
+		m_pMyBullet = new SBulletData();
+	}
 	~SGeneralTowerModel()
 	{
 		delete m_pMyBullet;
@@ -122,7 +131,7 @@ struct STowerMgrData
 {
 	/*塔数据数组*/
 	std::vector<SGeneralTowerModel*> m_rgTowerModel;
-
+	
 	~STowerMgrData()
 	{
 		for (SGeneralTowerModel* p : m_rgTowerModel)
@@ -138,10 +147,16 @@ struct SLevelData
 {
 	STowerMgrData* m_pTowerMgr;
 	SWaveData* m_pMonsterMgr;
-
+	SLevelData()
+	{
+		m_pMonsterMgr = new SWaveData();
+		m_pTowerMgr = new STowerMgrData();
+	}
 	~SLevelData()
 	{
 		delete m_pMonsterMgr;
 		delete m_pTowerMgr;
 	}
 };
+
+#endif // !_DATAMGR_H_

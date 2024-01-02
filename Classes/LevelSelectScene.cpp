@@ -1,7 +1,8 @@
 // LevelSelectScene.cpp
 
 #include "LevelSelectScene.h"
-//#include "DataTransTool.h"
+#include "DataTransTool.h"
+#include "DataMgr.h"
 #include "LevelSceneOne.h"
 //#include "LevelSceneTwo.h"
 #include "StartScene.h" // 包含开始场景的头文件
@@ -9,6 +10,8 @@
 USING_NS_CC;
 
 int LevelSelectScene::lastSelectedLevel = 0;
+
+
 
 LevelSelectScene::LevelSelectScene()
 {
@@ -29,9 +32,7 @@ Scene* LevelSelectScene::createScene()
 }
 
 int LevelSelectScene::getLastSelectedLevel() {
-
-    return 0;
-  // return lastSelectedLevel;
+    return lastSelectedLevel;
 }
 
 
@@ -82,7 +83,7 @@ void LevelSelectScene::level1Callback(cocos2d::Ref* pSender) {
         setLastSelectedLevel(1);
 
     // 处理点击 Level 1 按钮的逻辑
-    Director::getInstance()->replaceScene(LevelSceneOne::createWithData(NULL));
+    Director::getInstance()->replaceScene(LevelSceneOne::createWithData(openFile("LevelOne.txt")));
 }
 
 void LevelSelectScene::level2Callback(cocos2d::Ref* pSender) {

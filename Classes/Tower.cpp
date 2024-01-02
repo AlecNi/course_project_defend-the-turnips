@@ -75,6 +75,7 @@ CBullet* CGeneralTower::attack(CMonster* target, float dt)
 
 CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 {
+	
 	/*获得各种角度，mon_ang，my_ang在0~360，delta_ang在0~180*/
 	float mon_ang = CC_RADIANS_TO_DEGREES((target->getPosition() - getPosition()).getAngle());
 	float my_ang = getRotation();

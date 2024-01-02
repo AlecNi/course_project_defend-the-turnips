@@ -42,7 +42,7 @@ CTowerMgr* CTowerMgr::createWithData(STowerMgrData* pInitData,CMonsterMgr* mgr, 
         pTowerMgr->m_rgMyTowerModel = pInitData->m_rgTowerModel;
         pTowerMgr->m_pMyMonsterMgr = mgr;
         pTowerMgr->m_pMyGold = gold;
-        pTowerMgr->autorelease();
+        //pTowerMgr
 
         return pTowerMgr;
     }
@@ -59,15 +59,17 @@ bool CTowerMgr::init()
     m_iCurTowerNum = 0;
     m_rgMyLabel.clear();
     m_rgMyTowerList.clear();
+    m_rgMyTowerModel.clear();
 
     schedule(CC_SCHEDULE_SELECTOR(CTowerMgr::update));
 
     return true;
 }
 
-inline void CTowerMgr::update(float dt)
+void CTowerMgr::update(float dt)
 {
-    auto vec_mon = m_pMyMonsterMgr->getActiveMonsterList();
+    std::vector<CMonster*> vec_mon;
+    m_pMyMonsterMgr->getActiveMonsterList(vec_mon);
     std::vector<Vec2> tower_pos;
     std::vector<Vec2> monster_pos;
 
@@ -193,18 +195,20 @@ void CTowerMgr::menuInEmpty(Vec2 pos)
         MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
             [this, menuItem, model, pos](Ref* sender) {
                 if (sender == menuItem) {
-                    //m_pMyGold->spendGolds(model->m_pMyCost[0]);
+                    if(m_pMyGold->spendGolds(model->m_pMyCost[0]))
 
                     createTower(model, pos);
                 }
             });
-        menuItem->addChild(imageSprite);
+        if (menuItem != nullptr) {
+            menuItem->addChild(imageSprite);
 
-        /*设置菜单项位置*/
-        menuItem->setPosition(pos + Vec2(20, 20 * i - 10 - m_rgMyTowerModel.size() * 10));
+            /*设置菜单项位置*/
+            menuItem->setPosition(pos + Vec2(20, 20 * i - 10 - m_rgMyTowerModel.size() * 10));
 
-        /*将菜单项添加到菜单中*/
-        addChild(menuItem);
+            /*将菜单项添加到菜单中*/
+            addChild(menuItem);
+        }
     }
 }
 
@@ -233,17 +237,18 @@ void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
     MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
         [this, menuItem, model, pos, now_level, choose](Ref* sender) {
             if (sender == menuItem) {
-                //m_pMyGold->spendGolds(model->m_pMyCost[now_level]);
+                if(m_pMyGold->spendGolds(model->m_pMyCost[now_level]))
 
                 createTower(model, pos);
             }
         });
-    menuItem->addChild(imageSprite);
+    if (menuItem != nullptr) {
+        menuItem->addChild(imageSprite);
 
-    menuItem->setPosition(pos + Vec2(20, 10));
+        menuItem->setPosition(pos + Vec2(20, 10));
 
-    addChild(menuItem);
-
+        addChild(menuItem);
+    }
 
     /*删除选项*/
     /*谁能告诉我字体路径*/
@@ -261,11 +266,13 @@ void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
                 createTower(model, pos);
             }
         });
-    menuItem->addChild(imageSprite);
+    if (menuItem != nullptr) {
+        menuItem->addChild(imageSprite);
 
-    menuItem->setPosition(pos + Vec2(20, -10));
+        menuItem->setPosition(pos + Vec2(20, -10));
 
-    addChild(menuItem);
+        addChild(menuItem);
+    }
 }
 
 void CTowerMgr::Memu(Vec2 pos)

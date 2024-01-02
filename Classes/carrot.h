@@ -44,7 +44,7 @@ public:
 
 protected:
 	/*申请生成一个萝卜并返回指针(挺生草的)*/
-	CREATE_FUNC(CCarrot);
+	static CCarrot* create();
 
 	/*萝卜受伤,返回true表示死亡*/
 	bool damage(CMonster* monster);

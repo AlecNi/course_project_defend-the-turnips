@@ -1,0 +1,4 @@
+3
+120 12 1.5 500 30 Tower_zzy 1 Tower_2_1.png 1 Bullet_3.png
+200 30 1.2 600 30 Tower_zzy 1 Tower_2_2.png 1 Bullet_3.png
+380 50 1.0 650 30 Tower_zzy 1 Tower_2_3.png 1 Bullet_3.png

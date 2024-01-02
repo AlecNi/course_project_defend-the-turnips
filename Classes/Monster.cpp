@@ -16,7 +16,7 @@ CMonster::CMonster()
 :m_flMyDeSpeedRate(0),m_flMySpeed(0),m_fMyIsActive(0),
 m_iMyDeHealth(1),m_iMyGoldNum(14),m_iMyHealth(10),m_iMyNowHealth(10)
 {
-
+	m_pHpUI = new CMonsterHpUI();
 }
 
 CMonster::~CMonster()
@@ -28,9 +28,10 @@ CMonster* CMonster::createWithData(SMonsterData* pSInitData)
 {
 	CMonster* pMonster = new CMonster();
 	if (nullptr != pMonster && pMonster->initWithData(pSInitData)) {
-		pMonster->autorelease();
+		CCLOG("Monster success");
 		return pMonster;
 	}
+	CCLOG("Monster fail");
 	CC_SAFE_DELETE(pMonster);
 	return nullptr;
 }
@@ -40,6 +41,7 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 	//图片初始化
 	if(!this->initWithFile(pSInitData->m_strFrameName))
 	{
+
 		return false;
 	}
 
@@ -52,6 +54,7 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 	setMySpeed(pSInitData->m_flMySpeed);
 	setMyPath(pSInitData->m_vecMyPath);
 	setSlowDownTime(0);
+	setMyNowPath(0);
 
 	m_pHpUI =CMonsterHpUI::create();
 	if (!m_pHpUI->init())
@@ -59,7 +62,7 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 		return false;
 	}
 	this->addChild(m_pHpUI);
-	m_pHpUI->setPosition(Vec2(0, 1));
+	m_pHpUI->setPosition(getContentSize().width / 2, getContentSize().height+10);
 
 	this->initAutoMove();
 	this->setInActive();
@@ -78,31 +81,36 @@ void CMonster::updateMove(float flDelta)
 	{
 		return;
 	}
+	
 	if (m_iMyNowPath == m_vecMyPath.size())
 	{
 		deathBehavior();
 		return;
 	}
+
+	int iScale = Director::getInstance()->getScheduler()->getTimeScale();
 	Vec2 targetPosition = m_vecMyPath[m_iMyNowPath];
 	Vec2 nowPosition = getPosition();
 	float flTargetLenth = targetPosition.distance(nowPosition);
-	float flMoveLenth = flDelta * m_flMySpeed * (1 - m_flMyDeSpeedRate);
-	while (flMoveLenth > flTargetLenth) 
+	float flMoveLenth = flDelta * m_flMySpeed * (1 - m_flMyDeSpeedRate) * iScale;
+	while (std::fabs(flMoveLenth-flTargetLenth)<=2)
 	{
-		flDelta = (flMoveLenth - flTargetLenth) / (m_flMySpeed * (1 - m_flMyDeSpeedRate));
+		flDelta = (flMoveLenth - flTargetLenth) / (m_flMySpeed * (1 - m_flMyDeSpeedRate)*iScale);
 		nowPosition = m_vecMyPath[m_iMyNowPath];
 		++m_iMyNowPath;
 		if (m_iMyNowPath == m_vecMyPath.size()) 
 		{
+			deathBehavior();
 			return;
 		}
 		targetPosition = m_vecMyPath[m_iMyNowPath];
 		flTargetLenth = targetPosition.distance(nowPosition);
-		flMoveLenth = flDelta * m_flMySpeed * (1 - m_flMyDeSpeedRate);
+		flMoveLenth = flDelta * m_flMySpeed * (1 - m_flMyDeSpeedRate)*iScale;
 	}
 	Vec2 direction = targetPosition - nowPosition;
 	direction.normalize();
-	this->setPosition(nowPosition + direction * m_flMyDeSpeedRate * (1 - m_flMyDeSpeedRate));
+	this->setPosition(nowPosition + direction * m_flMySpeed * (1 - m_flMyDeSpeedRate)*iScale);
+	CCLOG("%f,%f", nowPosition.x, nowPosition.y);
 	return;
 }
 
@@ -143,6 +151,8 @@ bool CMonster::MyIsActive()
 
 void CMonster::setActive()
 {
+	CCLOG("Monster Move!");
+	setContentSize(Size(80, 80));
 	//设置活跃
 	setMyIsActive(true);
 	//设置初始位置和路径

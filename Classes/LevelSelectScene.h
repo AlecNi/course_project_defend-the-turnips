@@ -4,7 +4,6 @@
 #ifndef __LEVEL_SELECT_SCENE_H__
 #define __LEVEL_SELECT_SCENE_H__
 
-#include "LevelSceneOne.h"   
 //#include "LevelSceneTwo.h"   
 #include "cocos2d.h"
 USING_NS_CC;

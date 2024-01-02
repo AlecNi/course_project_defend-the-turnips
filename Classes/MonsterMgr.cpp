@@ -19,7 +19,8 @@ ver1.1 实现头文件ver1.2的接口，但金币接口暂时无
 
 CMonsterMgr::CMonsterMgr()
 {
-
+	m_pActiveMonsterList.clear();
+	m_pInActiveMonsterList.clear();
 }
 
 CMonsterMgr::~CMonsterMgr()
@@ -33,7 +34,6 @@ CMonsterMgr* CMonsterMgr::createWithData(SWaveData* pSInitData)
 	CMonsterMgr* pMonsterMgr = new CMonsterMgr();
 	if (nullptr != pMonsterMgr && pMonsterMgr->initWithData(pSInitData))
 	{
-		pMonsterMgr->autorelease();
 		return pMonsterMgr;
 	}
 	CC_SAFE_DELETE(pMonsterMgr);
@@ -47,16 +47,13 @@ bool CMonsterMgr::initWithData(SWaveData* initData)
 		return false;
 	}
 	m_pWaveData = initData;
-	int iMonsterNumAll = 0;
-	for (int i = 0; i < m_pWaveData->m_iWaveNum; i++)
-	{
-		iMonsterNumAll += m_pWaveData->m_iWaveMonsterNum[i];
-	}
+	int iMonsterNumAll = m_pWaveData->m_flMonsterWaitTime.size();
 	CMonster* pMonster=nullptr;
 	for (int i = 0; i < iMonsterNumAll; i++) {
 		pMonster = CMonster::createWithData(m_pWaveData->m_pMonsterData[i]);
 		m_pInActiveMonsterList.push_back(pMonster);
 		pMonster->setMgr(this);
+		addChild(pMonster,INTMAX_MAX);
 	}
 	//设置初始值
 	setCurWaveNum(0);
@@ -77,7 +74,7 @@ bool CMonsterMgr::WaveStart() {
 	float flWaitTime = 0;
 	for (int i = 0; i < m_pWaveData->m_iWaveNum; i++)
 	{
-		flWaitTime += m_pWaveData->m_flMonsterWaitTime[i];
+		flWaitTime += m_pWaveData->m_flWaveTime[i];
 		this->scheduleOnce([=](float flDelta)
 			{
 				MonsterGenerate();
@@ -88,18 +85,20 @@ bool CMonsterMgr::WaveStart() {
 
 void CMonsterMgr::MonsterGenerate()
 {
+	CCLOG("Monster Generate");
 	if (m_iCurWaveNum >= m_pWaveData->m_iWaveNum) {
 		return;
 	}
 	m_iCurWaveNum++;
+
 	for (int i = 0; i < m_pWaveData->m_iWaveMonsterNum[m_iCurWaveNum - 1]; i++)
 	{
-		this->scheduleOnce([=](float flDelta) {
+		this->scheduleOnce([&](float flDelta) {
 				m_pInActiveMonsterList[m_iCurMonIndex]->setActive();
 				m_pInActiveMonsterList[m_iCurMonIndex]->initAutoMove();
 				m_pActiveMonsterList.push_back(m_pInActiveMonsterList[m_iCurMonIndex]);
+				m_iCurMonIndex++;
 			},m_pWaveData->m_flMonsterWaitTime[m_iCurMonIndex], "Monster" + std::to_string(m_iCurMonIndex));
-		m_iCurMonIndex++;
 	}
 }
 
@@ -115,7 +114,6 @@ void CMonsterMgr::MonsterDeathMgr(CMonster* pMonster)
 		return;
 	}
 	m_pActiveMonsterList.erase(it);
-	m_pActiveMonsterList.resize(m_pActiveMonsterList.size() - 1);
 	m_pGold->addGolds(pMonster->getMyGoldNum());
 }
 
@@ -124,9 +122,13 @@ const bool CMonsterMgr::isFinished() const
 	return (m_pWaveData->m_iWaveNum == m_iCurWaveNum) && (m_pActiveMonsterList.size() == 0);
 }
 
-const std::vector<CMonster*> CMonsterMgr::getActiveMonsterList() const
+void CMonsterMgr::getActiveMonsterList(std::vector<CMonster*>& rgMonsterList) const
 {
-	return m_pActiveMonsterList;
+	if (m_pActiveMonsterList.size() == 0)
+	{
+		return;
+	}
+	rgMonsterList = m_pActiveMonsterList;
 }
 
 void CMonsterMgr::setGoldLink(CGold* pGold)

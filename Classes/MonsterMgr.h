@@ -35,7 +35,7 @@ public:
 	const bool isFinished() const;					//返回是否游戏已经结束
 	void setGoldLink(CGold* pGold);					//建立gold类链接
 
-	const std::vector<CMonster*> getActiveMonsterList() const;	//返回活跃怪物列表
+	void getActiveMonsterList(std::vector<CMonster*>& rgMonsterList) const;	//返回活跃怪物列表
 protected:
 	CC_SYNTHESIZE(int, m_iCurWaveNum, CurWaveNum);	//表示当前波次
 	CC_SYNTHESIZE(int, m_iCurMonIndex, CurMonIndex);//表示当前怪物下标
