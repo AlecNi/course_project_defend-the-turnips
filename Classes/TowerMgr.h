@@ -1,4 +1,4 @@
-#pragma once
+
 /*
 * 倪朗恩 2251334
 *
@@ -26,6 +26,7 @@ class CGold;
 
 class CTowerMgr : public cocos2d::Layer {
 public:
+	CTowerMgr();
 	virtual ~CTowerMgr();
 
 	/*初始化数据*/

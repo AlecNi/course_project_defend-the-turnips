@@ -27,7 +27,7 @@ ver1.3 增加怪物减速功能与接口
 USING_NS_CC;
 
 class CBullet;
-class SMonsterData;
+struct SMonsterData;
 class CGold;
 class CMonsterMgr;
 
@@ -47,8 +47,8 @@ public:
 
 	void deathBehavior();				//定义死亡行为
 	float getDistanceToCarrot() const;	//返回距离终点距离
-	int getGoldNum() const;				//获取怪物金币数量
-	bool IsActive() const;				//返回当前是否活跃接口
+	int getMyGoldNum();				//获取怪物金币数量
+	bool MyIsActive() ;				//返回当前是否活跃接口
 
 	void setActive();	//设置为活跃
 	void setInActive();	//设置为不活跃

@@ -66,7 +66,7 @@ bool CMonster::initWithData(SMonsterData* pSInitData)
 	return true;
 }
 
-inline void CMonster::initAutoMove() {
+void CMonster::initAutoMove() {
 	setPosition(m_vecMyPath[0]);
 	this->schedule(CC_SCHEDULE_SELECTOR(CMonster::updateMove));
 	this->schedule(CC_SCHEDULE_SELECTOR(CMonster::updateSpeed));
@@ -123,7 +123,7 @@ inline void CMonster::deathBehavior()
 	AudioEngine::play2d("death_effect.mp3",false);
 }
 
-inline float CMonster::getDistanceToCarrot() const
+float CMonster::getDistanceToCarrot() const
 {
 	if (m_iMyNowPath >= m_vecMyPath.size()) {
 		return 0;
@@ -131,12 +131,12 @@ inline float CMonster::getDistanceToCarrot() const
 	return m_vecMyPath[m_vecMyPath.size()-1].distance(getPosition());
 }
 
-inline int CMonster::getGoldNum() const
+int CMonster::getMyGoldNum()
 {
 	return m_iMyGoldNum;
 }
 
-inline bool CMonster::IsActive() const
+bool CMonster::MyIsActive() 
 {
 	return m_fMyIsActive;
 }
@@ -167,7 +167,7 @@ void CMonster::setInActive()
 	m_pHpUI->setVisible(false);
 }
 
-inline void CMonster::setMgr(CMonsterMgr* pMonsterMgr)
+void CMonster::setMgr(CMonsterMgr* pMonsterMgr)
 {
 	m_pMonsterMgr = pMonsterMgr;
 }

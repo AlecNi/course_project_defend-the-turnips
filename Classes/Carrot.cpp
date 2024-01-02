@@ -8,16 +8,21 @@
 * �ܲ���ʵ���ļ�
 */
 #include <string>
-#include "Carrot.h"
+#include "carrot.h"
 #include "Monster.h"
 #include "MonsterMgr.h"
+
+CCarrot::CCarrot()
+{
+
+}
 
 CCarrot::~CCarrot()
 {
     removeChild(m_pMyHpUI, true);
 }
 
-inline bool CCarrot::init()
+bool CCarrot::init()
 {
     if (!cocos2d::Sprite::init()) {
         return false;
@@ -73,7 +78,7 @@ CCarrot* CCarrot::createWithData(cocos2d::Vec2 pos, CMonsterMgr* mgr)
     return nullptr;
 }
 
-inline bool CCarrot::update()
+bool CCarrot::updateDamage()
 {
     auto vec_mon = m_pMyMonsterMgr->getActiveMonsterList();
 

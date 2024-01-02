@@ -8,14 +8,19 @@
 *
 * 防御塔的实现文件
 */
-#include "ui/CocosGUI.h"
-#include "Tower.h"
+
 #include "TowerMgr.h"
+#include "Tower.h"
 #include "MonsterMgr.h"
 #include "gold.h"
 #include "Bullet.h"
 #include "DataMgr.h"
 USING_NS_CC;
+
+CTowerMgr::CTowerMgr()
+{
+
+}
 
 CTowerMgr::~CTowerMgr()
 {
@@ -102,7 +107,7 @@ bool CTowerMgr::addModel(SGeneralTowerModel* model)
     return true;
 }
 
-inline int CTowerMgr::getCurTowerNum()
+int CTowerMgr::getCurTowerNum()
 {
     return m_iCurTowerNum;
 }
@@ -144,7 +149,7 @@ bool CTowerMgr::removeTower(CGeneralTower* move_tower)
     return false;
 }
 
-inline CGeneralTower* CTowerMgr::searchTower(cocos2d::Vec2 pos)
+CGeneralTower* CTowerMgr::searchTower(cocos2d::Vec2 pos)
 {
     for (int i = 0; i < m_rgMyTowerList.size(); ++i)
         if (m_rgMyTowerList[i]->getPosition() == pos)
@@ -153,7 +158,7 @@ inline CGeneralTower* CTowerMgr::searchTower(cocos2d::Vec2 pos)
     return nullptr;
 }
 
-inline bool CTowerMgr::insideLabel(const Vec2& pos)
+bool CTowerMgr::insideLabel(const Vec2& pos)
 {
     for (auto& label : m_rgMyLabel)
         if (label->getBoundingBox().containsPoint(pos))
@@ -162,7 +167,7 @@ inline bool CTowerMgr::insideLabel(const Vec2& pos)
     return false;
 }
 
-inline void CTowerMgr::removeLabel()
+void CTowerMgr::removeLabel()
 {
     for (auto& label : m_rgMyLabel){
         removeChild(label, true);
@@ -188,7 +193,7 @@ void CTowerMgr::menuInEmpty(Vec2 pos)
         MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
             [this, menuItem, model, pos](Ref* sender) {
                 if (sender == menuItem) {
-                    m_pMyGold->spendGolds(model->m_pMyCost[0]);
+                    //m_pMyGold->spendGolds(model->m_pMyCost[0]);
 
                     createTower(model, pos);
                 }
@@ -228,7 +233,7 @@ void CTowerMgr::menuNotInEmpty(CGeneralTower* choose, Vec2 pos)
     MenuItemLabel* menuItem = MenuItemLabel::create(numberLabel,
         [this, menuItem, model, pos, now_level, choose](Ref* sender) {
             if (sender == menuItem) {
-                m_pMyGold->spendGolds(model->m_pMyCost[now_level]);
+                //m_pMyGold->spendGolds(model->m_pMyCost[now_level]);
 
                 createTower(model, pos);
             }

@@ -1,4 +1,4 @@
-#pragma once
+
 /*
 * 倪朗恩 2251334
 * 
@@ -18,7 +18,6 @@
 /*
 struct SGeneralCondition;
 */
-struct SBulletData;
 struct SGeneralTowerModel;
 class CTowerMgr;
 class CMonster;
@@ -54,6 +53,7 @@ class CGeneralTower :public cocos2d::Sprite {
 	*/
 
 public:
+	CGeneralTower();
 	virtual ~CGeneralTower();
 
 	/*根据model与等级重置数据*/

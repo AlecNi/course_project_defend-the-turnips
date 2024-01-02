@@ -21,6 +21,11 @@ inline cocos2d::Vec2 trans_ij_to_xy(int ix, int iy) {
     return vec;
 }
 
+LevelSceneOne::LevelSceneOne()
+{
+
+}
+
 LevelSceneOne::~LevelSceneOne() {
     delete  m_pMonsterMgr;
     m_pMonsterMgr = nullptr;
@@ -58,7 +63,7 @@ bool LevelSceneOne::initWithData(SLevelData* pSInitData) {
     m_pCarrot = CCarrot::createWithData(Vec2(840,440),m_pMonsterMgr);
     schedule([=](float flDelta)
         {
-            if (m_pCarrot->update())
+            if (m_pCarrot->updateDamage())
             {
                 return;
             }

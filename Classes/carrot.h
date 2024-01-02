@@ -1,4 +1,4 @@
-#pragma once
+
 /*
 * 倪朗恩 2251334
 *
@@ -26,6 +26,7 @@ class CCarrot :public cocos2d::Sprite {
 	CC_SYNTHESIZE(int, m_iMyHp, MyHp);
 
 public:
+	CCarrot();
 	virtual ~CCarrot();
 
 	/*刷新血量显示*/
@@ -34,7 +35,7 @@ public:
 	static CCarrot* createWithData(cocos2d::Vec2 pos, CMonsterMgr* mgr);
 
 	/*萝卜受伤,返回true表示死亡*/
-	bool update();
+	bool updateDamage();
 
 	/*
 	* 萝卜的抖动动画

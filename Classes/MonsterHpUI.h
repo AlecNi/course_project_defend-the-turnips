@@ -17,6 +17,7 @@ USING_NS_CC;
 class CMonsterHpUI : public cocos2d::Node {
 public:
     CMonsterHpUI();
+    ~CMonsterHpUI();
 
     virtual bool init() override;
 

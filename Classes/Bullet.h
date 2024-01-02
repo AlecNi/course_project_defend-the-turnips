@@ -20,12 +20,9 @@ ver1.2 修改creat的参数命名 p->pCGeneralTower
 #define BULLET
 
 #include "cocos2d.h"
-#include <functional>
-
 USING_NS_CC;
 
 struct SBulletData;
-
 class CMonster;
 class CGeneralTower;
 
@@ -52,7 +49,7 @@ public:
 	void attack();										//实现攻击功能,请用这个
 
 	void CollisionAttack(float flDeltaTime);			//子弹定点碰撞攻击
-	void ContinueAttack(float flDeltaTime);				//激光类持续攻击
+ 	void ContinueAttack(float flDeltaTime);				//激光类持续攻击
 	void DirectAttack(float flDeltaTime);				//风扇类直线子弹攻击
 
 	const bool IsCollisionWith(CMonster* pMonster);		//检测是否碰撞
@@ -78,4 +75,4 @@ protected:
 
 };
 
-#endif // !BULLET
+#endif  //Bullet

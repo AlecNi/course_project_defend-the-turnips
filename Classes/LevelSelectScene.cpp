@@ -10,6 +10,14 @@ USING_NS_CC;
 
 int LevelSelectScene::lastSelectedLevel = 0;
 
+LevelSelectScene::LevelSelectScene()
+{
+
+}
+LevelSelectScene::~LevelSelectScene()
+{
+
+}
 
 void LevelSelectScene::setLastSelectedLevel(int a) {
     lastSelectedLevel = a;

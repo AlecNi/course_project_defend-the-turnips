@@ -12,9 +12,8 @@ USING_NS_CC;
 class LevelSelectScene : public cocos2d::Scene
 {
 public:
-    
-    LevelSelectScene(int level = 1);
-
+    LevelSelectScene();
+    ~LevelSelectScene();
     static int getLastSelectedLevel();
 
     void setLastSelectedLevel(int a);

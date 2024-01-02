@@ -10,6 +10,8 @@
 class GameWinScene : public cocos2d::Scene
 {
 public:
+    GameWinScene();
+    ~GameWinScene();
     static cocos2d::Scene* createScene();
     virtual bool init();
 
@@ -20,7 +22,7 @@ public:
     void returnToLevelSelectCallback(cocos2d::Ref* pSender);
 
     //ÒÆ³ýÐ¡Í¼Æ¬
-    void GameWinScene::showAndDismissImage(float dt);
+    void showAndDismissImage(float dt);
  
 private:
     void createBackground(); // ´´½¨±³¾°

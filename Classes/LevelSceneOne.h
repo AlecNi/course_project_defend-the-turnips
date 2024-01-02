@@ -12,10 +12,6 @@
 
 USING_NS_CC;
 
-struct pos {
-    int i;
-    int j;
-};
 
 struct SLevelData;
 class CMonsterMgr;
@@ -25,6 +21,7 @@ class CCarrot;
 
 class LevelSceneOne : public cocos2d::Scene {
 public:
+    LevelSceneOne();
     ~LevelSceneOne();
     static LevelSceneOne* createWithData(SLevelData* pSInitData);
 

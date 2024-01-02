@@ -6,6 +6,16 @@
 
 USING_NS_CC;
 
+GameWinScene::GameWinScene()
+{
+
+}
+
+GameWinScene::~GameWinScene()
+{
+
+}
+
 Scene* GameWinScene::createScene()
 {
     return GameWinScene::create();

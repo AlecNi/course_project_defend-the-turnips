@@ -19,6 +19,9 @@
 class StartScene : public cocos2d::Scene
 {
 public:
+
+    StartScene();
+    ~StartScene();
     static cocos2d::Scene* createScene();
 
     virtual bool init();

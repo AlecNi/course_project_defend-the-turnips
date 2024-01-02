@@ -8,7 +8,15 @@
 
 USING_NS_CC;
 
+StartScene::StartScene()
+{
 
+}
+
+StartScene::~StartScene()
+{
+
+}
 
 Scene* StartScene::createScene()
 {

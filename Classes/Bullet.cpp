@@ -37,19 +37,19 @@ CBullet* CBullet::createWithData(SBulletData* pInitData, CGeneralTower* pTower)
 	return nullptr;
 }
 
-inline void CBullet::setFatherTower(CGeneralTower* pT)
+ void CBullet::setFatherTower(CGeneralTower* pT)
 {
 	m_pTowerFrom = pT;
 	pT->addChild(this);
 	setPosition(pT->getPosition());
 }
 
-inline void CBullet::setAimedMonster(CMonster* pAimedMonster)
+ void CBullet::setAimedMonster(CMonster* pAimedMonster)
 {
 	m_pAimedMonster = pAimedMonster;
 }
 
-inline void CBullet::setBulletDamage(int iDamage)
+ void CBullet::setBulletDamage(int iDamage)
 {
 	setMyDamage(iDamage);
 }
@@ -70,7 +70,7 @@ bool CBullet::initWithData(SBulletData* pInitData)
 	return true;
 }
 
-inline void CBullet::attack()
+void CBullet::attack()
 {
 	switch (m_iMyAttackType)
 	{
@@ -81,7 +81,7 @@ inline void CBullet::attack()
 	}
 	case 1:
 	{
-		schedule(CC_SCHEDULE_SELECTOR(CBullet::CollisionAttack));
+		schedule(CC_SCHEDULE_SELECTOR(CBullet::ContinueAttack));
 		break;
 	}
 	case 2:
@@ -96,7 +96,7 @@ inline void CBullet::attack()
 	}
 }
 
-inline const bool CBullet::IsCollisionWith(CMonster* pMonster)
+ const bool CBullet::IsCollisionWith(CMonster* pMonster)
 {
 	Rect MonsterSize = pMonster->getBoundingBox();
 	Rect BulletSize = this->getBoundingBox();
@@ -104,14 +104,14 @@ inline const bool CBullet::IsCollisionWith(CMonster* pMonster)
 	return BulletSize.intersectsRect(MonsterSize);
 }
 
-inline void CBullet::MakeDamage(CMonster* pMonster)
+void CBullet::MakeDamage(CMonster* pMonster)
 {
 	pMonster->damage(m_iMyDamage);
 }
 
 void CBullet::CollisionAttack(float flDeltaTime)
 {
-	if (!m_pAimedMonster->IsActive())
+	if (!m_pAimedMonster->MyIsActive())
 	{
 		m_fIsActive = false;
 	}
@@ -145,13 +145,23 @@ void CBullet::CollisionAttack(float flDeltaTime)
 	return;
 }
 
+void CBullet::ContinueAttack(float flDeltaTime)
+{
+
+}
+
+void CBullet::DirectAttack(float flDeltaTime)
+{
+
+}
+
 void CBullet::setInActive()
 {
 	setIsActive(false);
 	setVisible(false);
 }
 
-inline void CBullet::MakeDamageSpeedDown(CMonster* pMonster)
+ void CBullet::MakeDamageSpeedDown(CMonster* pMonster)
 {
 	pMonster->damage(m_iMyDamage);
 	pMonster->SlowDown(m_flBulletSlowDownRate, m_flBulletSlowDownTime);

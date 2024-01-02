@@ -13,7 +13,7 @@ ver1.1 实现头文件ver1.2的接口，但金币接口暂时无
 #include "Monster.h"
 #include "DataMgr.h"
 #include "gold.h"
-#include "string"
+#include <string>
 
 
 
@@ -116,20 +116,20 @@ void CMonsterMgr::MonsterDeathMgr(CMonster* pMonster)
 	}
 	m_pActiveMonsterList.erase(it);
 	m_pActiveMonsterList.resize(m_pActiveMonsterList.size() - 1);
-	m_pGold->addGolds(pMonster->getGoldNum());
+	m_pGold->addGolds(pMonster->getMyGoldNum());
 }
 
-inline const bool CMonsterMgr::isFinished() const
+const bool CMonsterMgr::isFinished() const
 {
 	return (m_pWaveData->m_iWaveNum == m_iCurWaveNum) && (m_pActiveMonsterList.size() == 0);
 }
 
-inline const std::vector<CMonster*> CMonsterMgr::getActiveMonsterList() const
+const std::vector<CMonster*> CMonsterMgr::getActiveMonsterList() const
 {
 	return m_pActiveMonsterList;
 }
 
-inline void CMonsterMgr::setGoldLink(CGold* pGold)
+void CMonsterMgr::setGoldLink(CGold* pGold)
 {
 	m_pGold = pGold;
 }

@@ -12,6 +12,11 @@
 #include "Monster.h"
 #include "DataMgr.h"
 
+CGeneralTower::CGeneralTower()
+{
+
+}
+
 CGeneralTower::~CGeneralTower()
 {
 	while (!m_rgMyActiveBullet.empty()) {
@@ -32,7 +37,7 @@ void CGeneralTower::initByModel()
 	m_fMyBarrelLen = m_pMyModel->m_fMyBarrelLen[m_iMyLevel - 1];
 }
 
-inline CGeneralTower* CGeneralTower::createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
+CGeneralTower* CGeneralTower::createWithData(SGeneralTowerModel* model, CTowerMgr* mgr, int level)
 {
 	auto tower = CGeneralTower::create();
 
@@ -47,7 +52,7 @@ inline CGeneralTower* CGeneralTower::createWithData(SGeneralTowerModel* model, C
 	return nullptr;
 }
 
-inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
+CBullet* CGeneralTower::attack(CMonster* target, float dt)
 {
 	auto iter = m_rgMyActiveBullet.begin();
 
@@ -68,7 +73,7 @@ inline CBullet* CGeneralTower::attack(CMonster* target, float dt)
 	return rotate(target, dt);
 }
 
-inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
+CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 {
 	/*获得各种角度，mon_ang，my_ang在0~360，delta_ang在0~180*/
 	float mon_ang = CC_RADIANS_TO_DEGREES((target->getPosition() - getPosition()).getAngle());
@@ -118,7 +123,7 @@ inline CBullet* CGeneralTower::rotate(CMonster* target, float dt)
 	return nullptr;
 }
 
-inline cocos2d::Vec2 CGeneralTower::getBarrelPos()
+cocos2d::Vec2 CGeneralTower::getBarrelPos()
 {
 	/*弧度*/
 	double angleInRadians = CC_DEGREES_TO_RADIANS(getRotation());
@@ -127,7 +132,7 @@ inline cocos2d::Vec2 CGeneralTower::getBarrelPos()
 	return currentPosition + cocos2d::Vec2(m_fMyBarrelLen * std::cos(angleInRadians), m_fMyBarrelLen * std::sin(angleInRadians));
 }
 
-inline SGeneralTowerModel* CGeneralTower::getModel()
+SGeneralTowerModel* CGeneralTower::getModel()
 {
 	return m_pMyModel;
 }

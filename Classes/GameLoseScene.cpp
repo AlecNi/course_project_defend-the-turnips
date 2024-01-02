@@ -6,6 +6,15 @@
 
 USING_NS_CC;
 
+GameLoseScene::GameLoseScene()
+{
+
+};
+GameLoseScene::~GameLoseScene()
+{
+
+};
+
 Scene* GameLoseScene::createScene()
 {
     return GameLoseScene::create();

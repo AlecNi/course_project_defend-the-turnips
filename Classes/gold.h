@@ -8,8 +8,9 @@
 
 class CGold : public cocos2d::Sprite {
 public:
-    virtual bool init();
     CREATE_FUNC(CGold);
+    CGold(int coins = 0);
+    ~CGold();
 
     // 增加金币数量
     void addGolds(int amount);
@@ -21,10 +22,10 @@ public:
     int getGolds() const;
 
     // 更新金币标签显示
-    void updateLabel();
+    void setGolds(int coins);
 
 private:
-    int goolds; // 金币数量
+    int golds; // 金币数量
     cocos2d::Label* label; // 用于显示金币数量的标签
 };
 

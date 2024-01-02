@@ -14,6 +14,11 @@ CMonsterHpUI::CMonsterHpUI() : m_flMyRate(1.0f)
 
 }
 
+CMonsterHpUI::~CMonsterHpUI()
+{
+
+}
+
 bool CMonsterHpUI::init() {
     if (!Node::init()) {
         return false;
